@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "XML Generation";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">@ViewData["Title"]</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard v2</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6 col-lg-6 maintagcontainer">
+                            <div class="form-group">
+                                <label class="control-label">Main Tag List</label>
+                                <select class="form-control select2 maintags" asp-items="@(new SelectList(ViewBag.data,"ID","Name"))" id="usertype_dropdown">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6 col-lg-6 injectparent">
+
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col attributecontainer">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><button class="btn btn-success btn-block pushtoparent">Push to DOM</button></div>
+                        <div class="col"><button class="btn btn-secondary btn-block clearbtn">Clear</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">XML DOM</div>
+                <div class="card-body">
+                    <textarea class="xmldom" rows="20" style="width: 100%">
+                        </textarea>
+                </div>
+            </div>
+
+        </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<script src="~/plugins/select2/js/select2.full.min.js"></script>
+<!-- Select2 -->
+<!-- Select2 -->
+<link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<script src="~/node_modules/xml-formatter/dist/browser/xml-formatter.js"></script>
+@section Scripts {
+    <script>
+        var taglist = @Html.Raw(Json.Serialize(ViewBag.data))
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                placeholder: "Select an option"
+            });
+
+    </script>
+
+    <script src="~/js/Home/XMLMain.js"></script>
+}

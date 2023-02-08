@@ -1,0 +1,32 @@
+﻿@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Google+Sans:400,500|Product+Sans:400&amp;lang=en');
+
+* {
+    font-family: 'Google Sans';
+    font-weight:400;
+}
+
+.card {
+    box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.25);
+}
+
+.card .card {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+}
+
+.col-12:nth-child(even) .info-box {
+    background: linear-gradient(93.36deg, #F2589B 0.58%, #FDB779 96.68%);
+    box-shadow: 0px 4px 4px rgba(186, 183, 183, 0.25);
+    border-radius: 10px;
+    color: #FFF;
+}
+
+.col-12:nth-child(odd) .info-box {
+    background: linear-gradient(93.36deg, #5C4AEA 0.58%, #EDBDD8 96.68%);
+    box-shadow: 0px 4px 4px rgba(186, 183, 183, 0.25);
+    border-radius: 10px;
+    color: #FFF;
+}
+
+    .info-box .info-box-icon {
+        background: transparent;
+    }
