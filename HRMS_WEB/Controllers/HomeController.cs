@@ -41,7 +41,34 @@ namespace HRMS_WEB.Controllers
         {
             return View();
         }
+        /*
+         * supplier 
+         */
+        public IActionResult CreateSupplier()
+        {
+            return View(new SupplierViewModel());
+        }
 
+        [HttpPost]
+        public IActionResult CreateSupplier(SupplierViewModel model)
+        {
+            return RedirectToAction("ViewSuppliers");
+        }
 
+        public IActionResult ViewSuppliers()
+        {
+            return View();
+        }
+        /*
+         * templates
+         */
+        public IActionResult ViewTemplates()
+        {
+            return View();
+        }
+        public IActionResult CreateTemplate()
+        {
+            return View();
+        }
     }
 }

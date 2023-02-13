@@ -1,0 +1,24 @@
+﻿body{
+    font-family: var(--app-font);
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.border-dashed {
+    border-style: dashed !important;
+}
+.overflow-y, .overflow-y-scroll{
+    overflow-x: hidden;
+}
+.overflow-y{
+    overflow-y: auto;
+}
+.overflow-y-scroll{
+    overflow-y: scroll;
+}
+.app-bg-color{
+    background-color: var(--color-bg);
+}
+.app-bg-color-2{
+    background-color: var(--color-bg-warning);
+}

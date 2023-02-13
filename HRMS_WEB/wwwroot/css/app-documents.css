@@ -1,0 +1,57 @@
+﻿/*Content start*/
+:root{
+    --inbox-t-col-width: calc(100%/20);
+}
+#inbox{
+    font-size: 0.9em;
+}
+#documents-header input:focus{
+    box-shadow: none;
+}
+#inbox input[type="checkbox"]{
+    cursor: pointer;
+    width: 40% !important;
+}
+#inbox input[type="checkbox"]:focus{
+    box-shadow: none;
+}
+#inbox .dropdown .btn{
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9em;
+}
+.t-col{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: .25rem;
+    padding-left: .25rem;
+}
+.t-col-1{
+    width: var(--inbox-t-col-width);
+}
+.t-col-2{
+    width: calc(2*var(--inbox-t-col-width));
+}
+.t-col-3{
+    width: calc(3*var(--inbox-t-col-width));
+}
+.t-col-4{
+    width: calc(4*var(--inbox-t-col-width));
+}
+.t-col-5{
+    width: calc(5*var(--inbox-t-col-width));
+}
+.t-col-6{
+    width: calc(6*var(--inbox-t-col-width));
+}
+.t-col-7{
+    width: calc(7*var(--inbox-t-col-width));
+}
+.t-col-8{
+    width: calc(8*var(--inbox-t-col-width));
+}
+.t-col-9{
+    width: calc(9*var(--inbox-t-col-width));
+}
+/*Content end*/

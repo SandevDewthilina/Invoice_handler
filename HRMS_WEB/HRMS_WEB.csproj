@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -41,9 +42,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\windows_mouselogs\" />
-    <Folder Include="wwwroot\windows_errorlogs\" />
-    <Folder Include="wwwroot\windows_screenshots\" />
   </ItemGroup>
 
 </Project>

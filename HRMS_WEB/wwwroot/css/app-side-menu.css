@@ -1,0 +1,16 @@
+﻿.list-group-item{
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+}
+.list-group .selected{
+    background-color: var(--color-bg-selected) !important;
+    font-weight: bold;
+}
+#start-now{
+    background-color: var(--theme-yellow);
+    border: none;
+    border-radius: 0;
+    font-size: 1.25em;
+    letter-spacing: 0.1em;
+}

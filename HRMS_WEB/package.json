@@ -4,5 +4,8 @@
   "private": true,
   "devDependencies": {
     "xml-formatter": "2.4.0"
+  },
+  "dependencies": {
+    "uppy": "^3.4.0"
   }
 }

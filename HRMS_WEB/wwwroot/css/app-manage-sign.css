@@ -1,0 +1,18 @@
+:root{
+    --footer-height: 30px;
+}
+
+.draggable{
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    left: 10px;
+}
+#page-summary, #middle-section, #side-menu{
+    height: calc(100vh - var(--header-height)*3.25) !important;
+}
+footer{
+    font: var(--app-font);
+    font-size: 0.8em;
+    height: var(--footer-height) ;
+}
