@@ -14,8 +14,9 @@ using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using AutoMapper;
+    using HRMS_WEB.Repositories;
 
-namespace HRMS_WEB
+    namespace HRMS_WEB
 {
     public class Startup
     {
@@ -54,13 +55,9 @@ namespace HRMS_WEB
             // Automapper service for DTO's
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            // Repository dependancy injection
-
-            //if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            //{
-            //    DevExpress.Printing.CrossPlatform.CustomEngineHelper.RegisterCustomDrawingEngine(
-            //        typeof(DevExpress.CrossPlatform.Printing.DrawingEngine.PangoCrossPlatformEngine));
-            //}
+            // Repository dependency injection
+            services.AddScoped<IScraper, Scraper>();
+            services.AddScoped<IStorageRepository, StorageRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

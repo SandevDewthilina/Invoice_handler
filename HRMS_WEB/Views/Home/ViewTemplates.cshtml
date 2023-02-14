@@ -73,8 +73,8 @@
                             </td>
                             <td class="text-center" style="width: 100px">
                                 @* <a asp-action="ScrapePdf" asp-controller="Invoice" class="text-success text-sm fa fa-book-open mr-3"></a> *@
-                                <a href="#" class="text-sm fa fa-edit mr-3"></a>
-                                <a class="text-danger text-sm fa fa-trash mr-3" href="#"></a>
+                                <a :href="'/Home/EditTemplate?id='+ item.id" class="text-sm fa fa-edit mr-3"></a>
+                                <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Home/DeleteTemplate?id='+ item.id"></a>
                             </td>
                         </tr>
                         </tbody>

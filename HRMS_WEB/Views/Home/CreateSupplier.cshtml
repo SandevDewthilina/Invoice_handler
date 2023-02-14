@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+      <!-- Select2 -->
+      <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+      <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 }
 
 
@@ -51,20 +54,18 @@
                         @*     <label asp-for="Id">ID</label> *@
                         @*     <input disabled class="form-control" id="exampleInputEmail1" asp-for="Id"> *@
                         @* </div> *@
+                        <input hidden asp-for="Id">
                         <div class="form-group">
                             <label asp-for="Name">Name</label>
                             <input type="text" class="form-control" id="exampleInputPassword1" asp-for="Name" placeholder="Supplier Name">
                         </div>
                         <div class="form-group">
                             <label>Templates</label>
-                            <select class="select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
-                                <option>Alabama</option>
-                                <option>Alaska</option>
-                                <option>California</option>
-                                <option>Delaware</option>
-                                <option>Tennessee</option>
-                                <option>Texas</option>
-                                <option>Washington</option>
+                            <select class="select2"
+                                    multiple="multiple" 
+                                    data-placeholder="Select Templates" 
+                                    style="width: 100%;"
+                                     asp-items="@(new SelectList(Model.Templates, "Id", "Name"))">
                             </select>
                         </div>
                     </div>
@@ -84,7 +85,9 @@
 
 @section Scripts
 {
-    <script >
+    <!-- Select2 -->
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
+    <script defer >
      $('.select2').select2()
     </script>
 }

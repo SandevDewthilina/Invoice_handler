@@ -1,21 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HRMS_WEB.DbContext;
+using HRMS_WEB.Viewmodels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using HRMS_WEB.Models;
-using Microsoft.AspNetCore.Authorization;
-using HRMS_WEB.DbContext;
-using System.Text;
-using HRMS_WEB.Viewmodels;
-using HRMS_WEB.Entities;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.SignalR;
-using System.IO;
-using System.Xml.Linq;
 
 namespace HRMS_WEB.Controllers
 {
@@ -33,14 +20,14 @@ namespace HRMS_WEB.Controllers
 
         public IActionResult Index()
         {
-
             return View();
         }
-        
+
         public IActionResult Privacy()
         {
             return View();
         }
+
         /*
          * supplier 
          */
@@ -54,10 +41,30 @@ namespace HRMS_WEB.Controllers
         {
             return RedirectToAction("ViewSuppliers");
         }
+        public IActionResult EditSupplier(int Id)
+        {
+            return View(new SupplierViewModel()
+            {
+                Id = Id,
+                Name = "beedle bard",
+                SelectedIdList = new int[]{1}
+            });
+        }
+
+        [HttpPost]
+        public IActionResult EditSupplier(SupplierViewModel model)
+        {
+            return RedirectToAction("ViewSuppliers");
+        }
 
         public IActionResult ViewSuppliers()
         {
             return View();
+        }
+
+        public IActionResult DeleteSupplier(int Id)
+        {
+            return RedirectToAction("ViewSuppliers");
         }
         /*
          * templates
@@ -66,9 +73,37 @@ namespace HRMS_WEB.Controllers
         {
             return View();
         }
+
         public IActionResult CreateTemplate()
         {
-            return View();
+            return View(new TemplateViewModel());
         }
+
+        [HttpPost]
+        public IActionResult CreateTemplate(TemplateViewModel model)
+        {
+            model.Content = model.Content.Replace("\r", "");
+            return RedirectToAction("ViewTemplates");
+        }
+        public IActionResult EditTemplate(int Id)
+        {
+            return View(new TemplateViewModel()
+            {
+                Id = Id,
+                Name = "sandev dewthilina",
+                Content = "$kfdkfdskjk&&&fisdfi"
+            });
+        }
+
+        [HttpPost]
+        public IActionResult EditTemplate(TemplateViewModel model)
+        {
+            return RedirectToAction("ViewSuppliers");
+        }
+        public IActionResult DeleteTemplate(int Id)
+        {
+            return RedirectToAction("ViewTemplates");
+        }
+
     }
 }

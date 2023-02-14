@@ -1,7 +1,7 @@
 ﻿@{
-    ViewData["Title"] = "Create Template";
+    ViewData["Title"] = "Edit Supplier";
 }
-@model HRMS_WEB.Viewmodels.TemplateViewModel
+@model HRMS_WEB.Viewmodels.SupplierViewModel
 
 @section Styles{
     <!-- Font Awesome -->
@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+      <!-- Select2 -->
+      <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+      <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 }
 
 
@@ -29,7 +32,7 @@
                         <li class="breadcrumb-item">
                             <a href="#">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Create Template</li>
+                        <li class="breadcrumb-item active">Edit Supplier</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -41,11 +44,11 @@
         <div class="container-fluid" id="main">
             <div class="card card-primary card-outline">
                 <div class="card-header">
-                    <h3 class="card-title">Create Form</h3>
+                    <h3 class="card-title">Edit Form</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form role="form" method="post" asp-action="CreateTemplate" asp-controller="Home">
+                <form role="form" method="post" asp-action="CreateSupplier" asp-controller="Home">
                     <div class="card-body">
                         @* <div class="form-group"> *@
                         @*     <label asp-for="Id">ID</label> *@
@@ -54,13 +57,16 @@
                         <input hidden asp-for="Id">
                         <div class="form-group">
                             <label asp-for="Name">Name</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" asp-for="Name" placeholder="Template Name">
+                            <input type="text" class="form-control" id="exampleInputPassword1" asp-for="Name" placeholder="Supplier Name">
                         </div>
-                        <div class="pad">
-                            <div class="mb-3">
-                                <textarea asp-for="Content" class="textarea" placeholder="Place some text here"
-                                                  style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                            </div>
+                        <div class="form-group">
+                            <label>Templates</label>
+                            <select class="select2"
+                                    multiple="multiple" 
+                                    data-placeholder="Select Templates" 
+                                    style="width: 100%;"
+                                     asp-items="@(new MultiSelectList(Model.Templates, "Id", "Name", Model.SelectedIdList))">
+                            </select>
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -79,5 +85,9 @@
 
 @section Scripts
 {
-   
+    <!-- Select2 -->
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
+    <script defer >
+     $('.select2').select2()
+    </script>
 }

@@ -1,5 +1,4 @@
-﻿using HRMS_WEB.Entities;
-using HRMS_WEB.Models;
+﻿using HRMS_WEB.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -15,8 +14,8 @@ namespace HRMS_WEB.DbContext
         }
 
         // Entities
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Attribute> Attributes { get; set; }
-        public DbSet<TagAttributeAssignement> TagAttributeAssignements { get; set; }
+        public DbSet<Supplier> Supplier{ get; set; }
+        public DbSet<Template> Template { get; set; }
+        public DbSet<Upload> Upload { get; set; }
     }
 }

@@ -52,42 +52,29 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table id="myuploadstable" class="table table-bordered table-striped">
+                    <table id="myuploadstable" class="table table-striped">
                         <thead>
                         <tr>
                             <th></th>
                             <th>Thumbnail</th>
                             <th>File name</th>
-                            <th>Progress</th>
-                            <th>Review status</th>
                             <th>Uploaded at</th>
                             <th>Supplier name</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody v-for="item in myUploads">
-                        <tr>
+                        <tbody>
+                        <tr v-for="item in myUploads">
                             <td>{{item.id + '.'}}</td>
-                            <td class="text-center">
-                                <img src="~/invoices/179483.png" alt="" style="width: 30px; height: 30px; object-fit: contain">
+                            <td class="text-center" style="width: 30px">
+                                <img src="~/assets/179483.png" alt="" style="width: 30px; height: 30px; object-fit: contain">
                             </td>
-                            <td>{{item.filename}}</td>
-                            <td>
-                                <div class="progress progress-sm my-auto" style="width: 180px">
-                                    <div class="progress-bar bg-maroon" aria-valuenow="{{item.progress}}" aria-valuemin="0"
-                                         aria-valuemax="100" v-bind:style="'width: ' + item.progress*100 + '%'">
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div v-if="item.status == 'success'" class="badge badge-success">{{item.status}}</div>
-                                <div v-else class="badge badge-secondary">{{item.status}}</div>
-                            </td>
+                            <td>{{item.file_name}}</td>
                             <td>{{item.upload_date}}</td>
                             <td>{{item.supplier_name}}</td>
                             <td class="text-center">
-                                <a asp-action="ScrapePdf" asp-controller="Invoice" class="text-success text-sm fa fa-book-open mr-3"></a>
-                                <a href="#" class="text-sm fa fa-edit mr-3"></a>
+                                <a :href="'/Invoice/ExtractDataFromPdf?Id=' + item.id" class="text-success text-sm fa fa-book-open mr-3"></a>
+                                <a :href="'/Invoice/EditUpload?Id=' + item.id" class="text-sm fa fa-edit mr-3"></a>
                                 <a class="text-danger text-sm fa fa-trash mr-3" href="#"></a>
                             </td>
                         </tr>
@@ -105,18 +92,11 @@
 
 @section Scripts
 {
-    <script defer type="module" src="~/js/MyUploads.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- DataTables -->
     <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script>
-      $(function () {
-           $("#myuploadstable").DataTable({
-             "responsive": true,
-             "autoWidth": false,
-           });
-      });
-    </script>
+    <script  type="module" src="~/js/MyUploads.js"></script>
 }

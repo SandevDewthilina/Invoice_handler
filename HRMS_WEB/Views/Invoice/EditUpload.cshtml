@@ -1,7 +1,7 @@
 ﻿@{
-    ViewData["Title"] = "Create Template";
+    ViewData["Title"] = "Edit Upload";
 }
-@model HRMS_WEB.Viewmodels.TemplateViewModel
+@model HRMS_WEB.Viewmodels.UploadViewModel
 
 @section Styles{
     <!-- Font Awesome -->
@@ -29,7 +29,7 @@
                         <li class="breadcrumb-item">
                             <a href="#">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Create Template</li>
+                        <li class="breadcrumb-item active">Edit Upload</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -41,26 +41,34 @@
         <div class="container-fluid" id="main">
             <div class="card card-primary card-outline">
                 <div class="card-header">
-                    <h3 class="card-title">Create Form</h3>
+                    <h3 class="card-title">Edit Form</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form role="form" method="post" asp-action="CreateTemplate" asp-controller="Home">
+                <form role="form" method="post" asp-action="EditUpload" asp-controller="Invoice">
                     <div class="card-body">
-                        @* <div class="form-group"> *@
-                        @*     <label asp-for="Id">ID</label> *@
-                        @*     <input disabled class="form-control" id="exampleInputEmail1" asp-for="Id"> *@
-                        @* </div> *@
-                        <input hidden asp-for="Id">
+                        <input hidden asp-for="ID">
+                      
                         <div class="form-group">
-                            <label asp-for="Name">Name</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" asp-for="Name" placeholder="Template Name">
+                            <label asp-for="FileName">File Name</label>
+                            <input type="text" class="form-control" id="exampleInputPassword1" asp-for="FileName" placeholder="File Name">
                         </div>
-                        <div class="pad">
-                            <div class="mb-3">
-                                <textarea asp-for="Content" class="textarea" placeholder="Place some text here"
-                                                  style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                            </div>
+                        <div class="form-group">
+                            <label asp-for="FilePath">File Path</label>
+                            <input type="text" class="form-control" id="exampleInputPassword1" asp-for="FilePath" placeholder="File Path">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="UploadedDate">Name</label>
+                            <input type="date" class="form-control" id="exampleInputPassword1" asp-for="UploadedDate" placeholder="Upload date">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SupplierID">Select Supplier</label>
+                            <select class="form-control select2"
+                                    style="width: 100%;"
+                                    asp-for="SupplierID"
+                                    asp-items="@(new SelectList(Model.SupplierList, "ID", "Name", new int[] {Model.SupplierID}))">
+                                <option value="0">Select Supplier</option>
+                            </select>
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -76,8 +84,3 @@
 </div>
 <!-- /.content-wrapper -->
 <!-- PAGE SCRIPTS -->
-
-@section Scripts
-{
-   
-}

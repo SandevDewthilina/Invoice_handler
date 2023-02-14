@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 using System;
 using System.Collections.Generic;
