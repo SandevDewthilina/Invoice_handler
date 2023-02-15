@@ -25,8 +25,9 @@ namespace HRMS_WEB.Controllers
             _db = db;
         }
 
-        public IActionResult ExtractDataFromPdf()
+        public IActionResult ExtractDataFromPdf(int Id)
         {
+            ViewBag.Id = Id;
             return View();
         }
 
@@ -53,7 +54,7 @@ namespace HRMS_WEB.Controllers
                 var upload = new Upload()
                 {
                     FileName = file.FileName,
-                    FilePath = $"/Invoice/{file.FileName}",
+                    FilePath = Path.Combine("Invoices", file.FileName),
                     UploadedDate = DateTime.Now,
                     SupplierID = viewModel.SupplierID
                 };
@@ -91,6 +92,12 @@ namespace HRMS_WEB.Controllers
             };
             _db.Upload.Update(upload);
             await _db.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> DeleteUpload(int Id)
+        {
+            await _storageRepository.DeleteUpload(Id);
             return RedirectToAction("Index", "Home");
         }
     }

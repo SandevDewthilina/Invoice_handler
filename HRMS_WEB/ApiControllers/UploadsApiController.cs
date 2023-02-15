@@ -35,6 +35,28 @@ namespace HRMS_WEB.ApiControllers
                 })
             });
         }
+
+        [HttpGet]
+        public IActionResult GetUrlForUpload(int Id)
+        {
+            return Json(new
+            {
+                success = true,
+                data = _db.Upload.FirstOrDefault(u => u.ID == Id).FilePath
+            });
+        }
+
+        public async Task<IActionResult> GetTemplatesForUpload(int Id)
+        {
+            var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
+            var templates = await _db.SupplierTemplateAssignment.Include(a => a.Template)
+                .Where(a => a.SupplierID == upload.SupplierID).Select(u => u.Template).ToListAsync();
+            return Json(new
+            {
+                success = true,
+                data = templates
+            });
+        }
         
     }
 }

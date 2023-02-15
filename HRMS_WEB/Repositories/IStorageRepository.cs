@@ -6,5 +6,6 @@ namespace HRMS_WEB.Repositories
     public interface IStorageRepository
     {
         Task SaveFile(IFormFile file);
+        Task DeleteUpload(int Id);
     }
 }

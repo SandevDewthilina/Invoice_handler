@@ -5,6 +5,7 @@ using HRMS_WEB.DbContext;
 using HRMS_WEB.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRMS_WEB.Repositories
 {
@@ -24,6 +25,22 @@ namespace HRMS_WEB.Repositories
             var filepath = Path.Combine(folderPath, file.FileName);
             await using Stream fileStream = new FileStream(filepath, FileMode.Create);
             await file.CopyToAsync(fileStream);
+        }
+
+        public async Task DeleteUpload(int Id)
+        {
+            
+            var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, upload.FilePath);
+            if ( System.IO.File.Exists(path))
+            {
+                // delete from databaseo
+                _db.Upload.Remove(upload);
+                await _db.SaveChangesAsync();
+            
+                System.IO.File.Delete(path);
+            }
+            
         }
     }
 }

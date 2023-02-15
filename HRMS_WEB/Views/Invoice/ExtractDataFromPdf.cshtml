@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <style>
         #mypdf {
             width: 100%;
@@ -50,7 +53,22 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid" id="main">
-            <iframe src="~/invoices/pdf-test.pdf" frameborder="0" id="mypdf"></iframe>
+            <div class="form-group">
+                <div class="row align-items-end">
+                    <div class="col-sm-10">
+                        <label>Select Template Assigned to Start Extracting</label>
+                        <select class="form-control select2"
+                                id="myselect"
+                                style="width: 100%;">
+                            <option value="0" selected="selected">Select Template</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2 text-right">
+                        <div class="btn btn-block btn-outline-danger">Extract</div>
+                    </div>
+                </div>
+            </div>
+            <iframe src="" frameborder="0" id="mypdf"></iframe>
         </div><!--/. container-fluid -->
     </section>
     <!-- /.content -->
@@ -125,5 +143,26 @@
 
 @section Scripts
 {
+    <!-- Select2 -->
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
+    <script>
+                 $('.select2').select2({
+                   theme: 'bootstrap4'
+                 })
+        </script>
+    <script>
+        axios.get('/api/UploadsApi/GetUrlForUpload?Id=' + @ViewBag.Id).then(resp => {
+            $('#mypdf').attr('src', '../'+resp.data.data)
+        }).catch(err => alert(err.message))
+        axios.get('/api/UploadsApi/GetTemplatesForUpload?Id=' + @ViewBag.Id).then(resp => {
+            let select = document.getElementById('myselect')
+            resp.data.data.forEach(temp => {
+                let option = document.createElement("option");
+                option.text = temp.name
+                option.value = temp.name
+                select.add(option)
+            })            
+        }).catch(err => alert(err.message))
+    </script>
     @* <script defer type="module" src="~/js/MyUploads.js"></script> *@
 }

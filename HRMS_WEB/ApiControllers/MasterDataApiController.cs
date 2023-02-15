@@ -5,6 +5,7 @@ using HRMS_WEB.DbContext;
 using HRMS_WEB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace HRMS_WEB.ApiControllers
 {
@@ -18,7 +19,7 @@ namespace HRMS_WEB.ApiControllers
         {
             _db = db;
         }
-        
+
         [HttpGet]
         public IActionResult GetSuppliers()
         {
@@ -31,7 +32,7 @@ namespace HRMS_WEB.ApiControllers
                 })
             });
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetTemplates()
         {
@@ -39,6 +40,27 @@ namespace HRMS_WEB.ApiControllers
             {
                 success = true, data = await _db.Template.ToListAsync()
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTemplateForId(int Id)
+        {
+            var template = await _db.Template.FirstOrDefaultAsync(t => t.ID == Id);
+            var obj = new
+            {
+                form = new
+                {
+                    template_name = template.Name,
+                    templateRegexList = await _db.RegexComponent.Where(r => r.TemplateID == template.ID)
+                        .Select(r => new
+                        {
+                            id = r.ID,
+                            Key = r.Key,
+                            value = r.Value
+                        }).ToListAsync()
+                }
+            };
+            return Json(new {success = true, data = obj});
         }
 
         [HttpPost]
@@ -51,6 +73,33 @@ namespace HRMS_WEB.ApiControllers
             await _db.Template.AddAsync(template);
             await _db.SaveChangesAsync();
 
+            foreach (var regexItem in model.templateRegexList)
+            {
+                var regexComponent = new RegexComponent()
+                {
+                    Key = regexItem.key,
+                    Value = regexItem.value,
+                    TemplateID = template.ID
+                };
+                await _db.RegexComponent.AddAsync(regexComponent);
+            }
+
+            await _db.SaveChangesAsync();
+            return Json(new {success = true});
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> EditTemplate(int Id, CreateTemplateModel model)
+        {
+            var template = await _db.Template.FirstOrDefaultAsync(t => t.ID == Id);
+            template.Name = model.template_name;
+            _db.Template.Update(template);
+            await _db.SaveChangesAsync();
+
+            //delete previous assignements
+            _db.RegexComponent.RemoveRange(await _db.RegexComponent.Where(r => r.TemplateID == Id).ToListAsync());
+            await _db.SaveChangesAsync();
+            
             foreach (var regexItem in model.templateRegexList)
             {
                 var regexComponent = new RegexComponent()
