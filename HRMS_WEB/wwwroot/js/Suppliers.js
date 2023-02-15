@@ -4,20 +4,7 @@ import {DocStatus, LastChange, Document, MenuItem, SideMenuCategory, sideMenuMix
 const app = createApp({
     data() {
         return {
-            _suppliersList: [
-                {
-                    id: 1,
-                    name: 'Kamal Enterprises'
-                },
-                {
-                    id: 2,
-                    name: 'Asia Limited'
-                },
-                {
-                    id: 3,
-                    name: 'Supun Medicals'
-                }
-            ]
+            _suppliersList: []
         }
     },
     computed: {
@@ -25,7 +12,21 @@ const app = createApp({
             return this._suppliersList
         }
     },
-    methods: {}
+    methods: {},
+    created() {
+        axios.get('/api/MasterDataApi/GetSuppliers').then(resp => {
+            this._suppliersList = resp.data.data
+            console.log(this._suppliersList)
+            $(document).ready(function () {
+                $("#myuploadstable").DataTable({
+                    "responsive": true,
+                    "autoWidth": false,
+                });
+            });
+        }).catch(err => {
+            console.log(err.message)
+        })
+    }
 });
 
 app.mount("#main");

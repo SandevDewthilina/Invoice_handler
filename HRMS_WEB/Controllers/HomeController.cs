@@ -1,7 +1,11 @@
-﻿using HRMS_WEB.DbContext;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using HRMS_WEB.DbContext;
+using HRMS_WEB.Models;
 using HRMS_WEB.Viewmodels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HRMS_WEB.Controllers
@@ -10,12 +14,12 @@ namespace HRMS_WEB.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly HRMSDbContext db;
+        private readonly HRMSDbContext _db;
 
         public HomeController(ILogger<HomeController> logger, HRMSDbContext db)
         {
             _logger = logger;
-            this.db = db;
+            this._db = db;
         }
 
         public IActionResult Index()
@@ -31,29 +35,75 @@ namespace HRMS_WEB.Controllers
         /*
          * supplier 
          */
-        public IActionResult CreateSupplier()
-        {
-            return View(new SupplierViewModel());
-        }
-
-        [HttpPost]
-        public IActionResult CreateSupplier(SupplierViewModel model)
-        {
-            return RedirectToAction("ViewSuppliers");
-        }
-        public IActionResult EditSupplier(int Id)
+        public async Task<IActionResult> CreateSupplier()
         {
             return View(new SupplierViewModel()
             {
-                Id = Id,
-                Name = "beedle bard",
-                SelectedIdList = new int[]{1}
+                Templates = await _db.Template.ToListAsync()
             });
         }
 
         [HttpPost]
-        public IActionResult EditSupplier(SupplierViewModel model)
+        public async Task<IActionResult> CreateSupplier(SupplierViewModel model)
         {
+            var supplier = new Supplier()
+            {
+                Name = model.Name
+            };
+            await _db.Supplier.AddAsync(supplier);
+            await _db.SaveChangesAsync();
+            
+            // create new assignments
+            foreach (int tempId in model.NewlySelectedIdList)
+            {
+                var assignement = new SupplierTemplateAssignment()
+                {
+                    SupplierID = supplier.ID,
+                    TemplateID = tempId
+                };
+                await _db.SupplierTemplateAssignment.AddAsync(assignement);
+            }
+
+            await _db.SaveChangesAsync();
+            return RedirectToAction("ViewSuppliers");
+        }
+
+        public async Task<IActionResult> EditSupplier(int Id)
+        {
+            var supplier = await _db.Supplier.FirstOrDefaultAsync(s => s.ID == Id);
+            var supplierTemplates = await _db.SupplierTemplateAssignment.Where(a => a.SupplierID == supplier.ID).Select(a => a.Template.ID).ToArrayAsync();
+            return View(new SupplierViewModel()
+            {
+                Id = supplier.ID,
+                Name = supplier.Name,
+                AlreadySelectedIdList = supplierTemplates,
+                Templates = await _db.Template.ToListAsync()
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSupplier(SupplierViewModel model)
+        {
+            var supplier = await _db.Supplier.FirstOrDefaultAsync(s => s.ID == model.Id);
+            supplier.Name = model.Name;
+            _db.Supplier.Update(supplier);
+
+            // drop already assigned templates
+            var alreadyAssignedTemplates = _db.SupplierTemplateAssignment.Where(a => a.SupplierID == model.Id);
+            _db.SupplierTemplateAssignment.RemoveRange(alreadyAssignedTemplates);
+
+            // create new assignments
+            foreach (int tempId in model.NewlySelectedIdList)
+            {
+                var assignement = new SupplierTemplateAssignment()
+                {
+                    SupplierID = model.Id,
+                    TemplateID = tempId
+                };
+                await _db.SupplierTemplateAssignment.AddAsync(assignement);
+            }
+
+            await _db.SaveChangesAsync();
             return RedirectToAction("ViewSuppliers");
         }
 
@@ -62,10 +112,14 @@ namespace HRMS_WEB.Controllers
             return View();
         }
 
-        public IActionResult DeleteSupplier(int Id)
+        public async Task<IActionResult> DeleteSupplier(int Id)
         {
+            var supplier = await _db.Supplier.FirstOrDefaultAsync(s => s.ID == Id);
+            _db.Supplier.Remove(supplier);
+            await _db.SaveChangesAsync();
             return RedirectToAction("ViewSuppliers");
         }
+
         /*
          * templates
          */
@@ -82,28 +136,21 @@ namespace HRMS_WEB.Controllers
         [HttpPost]
         public IActionResult CreateTemplate(TemplateViewModel model)
         {
-            model.Content = model.Content.Replace("\r", "");
             return RedirectToAction("ViewTemplates");
         }
+
         public IActionResult EditTemplate(int Id)
         {
-            return View(new TemplateViewModel()
-            {
-                Id = Id,
-                Name = "sandev dewthilina",
-                Content = "$kfdkfdskjk&&&fisdfi"
-            });
+            return View();
         }
 
-        [HttpPost]
-        public IActionResult EditTemplate(TemplateViewModel model)
+        public async Task<IActionResult> DeleteTemplate(int Id)
         {
+            var template = await _db.Template.FirstOrDefaultAsync(s => s.ID == Id);
+            _db.Template.Remove(template);
+            await _db.SaveChangesAsync();
             return RedirectToAction("ViewSuppliers");
-        }
-        public IActionResult DeleteTemplate(int Id)
-        {
             return RedirectToAction("ViewTemplates");
         }
-
     }
 }

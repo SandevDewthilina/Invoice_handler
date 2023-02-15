@@ -17,5 +17,7 @@ namespace HRMS_WEB.DbContext
         public DbSet<Supplier> Supplier{ get; set; }
         public DbSet<Template> Template { get; set; }
         public DbSet<Upload> Upload { get; set; }
+        public DbSet<SupplierTemplateAssignment> SupplierTemplateAssignment { get; set; }
+        public DbSet<RegexComponent> RegexComponent { get; set; }
     }
 }

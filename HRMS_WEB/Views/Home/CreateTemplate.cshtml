@@ -1,7 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Create Template";
 }
-@model HRMS_WEB.Viewmodels.TemplateViewModel
 
 @section Styles{
     <!-- Font Awesome -->
@@ -45,28 +44,44 @@
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form role="form" method="post" asp-action="CreateTemplate" asp-controller="Home">
+                <form role="form">
                     <div class="card-body">
-                        @* <div class="form-group"> *@
-                        @*     <label asp-for="Id">ID</label> *@
-                        @*     <input disabled class="form-control" id="exampleInputEmail1" asp-for="Id"> *@
-                        @* </div> *@
-                        <input hidden asp-for="Id">
                         <div class="form-group">
-                            <label asp-for="Name">Name</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" asp-for="Name" placeholder="Template Name">
+                            <label>Name</label>
+                            <input type="text" v-model="form.template_name" class="form-control" id="exampleInputPassword1" placeholder="Template Name">
                         </div>
-                        <div class="pad">
-                            <div class="mb-3">
-                                <textarea asp-for="Content" class="textarea" placeholder="Place some text here"
-                                                  style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                        <div class="form-group">
+                            <label>Enter Components</label>
+                            <div class="col-sm-12">
+                                <div class="row mb-2 text-bold">
+                                    <div class="col-sm-1">ID</div>
+                                    <div class="col-sm-5">Key</div>
+                                    <div class="col-sm-6">Regular Expression</div>
+                                </div>
+                                <div class="row mb-2" v-for="regex in getRegexComponents">
+                                    <div class="col-sm-1">
+                                        <input type="text"  class="form-control" :value="regex.id" disabled>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input type="text" v-model="regex.key" class="form-control" :id="regex.key + '-keyField'" placeholder="Enter your key">
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input type="text" v-model="regex.value" class="form-control" :id="regex.value + '-valueField'" placeholder="Enter your Regex">
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <div class="btn btn-sm btn-danger my-auto" v-on:click="deleteRow(regex.id)"><i class="fa fa-trash"></i></div>
+                                    </div>
+                                </div>
+                                <div class="text-right mt-3">
+                                    <div class="btn btn-outline-primary btn-sm" v-on:click="addRow()"><i class="fa fa-plus mr-3"></i>Add Item</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" v-on:click="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
@@ -79,5 +94,5 @@
 
 @section Scripts
 {
-   
+    <script type="module" src="~/js/TemplateCreate.js"></script>
 }

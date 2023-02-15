@@ -67,7 +67,7 @@
                         @* </tr> *@
                         <tr>
                             <td style="width: 50px">{{item.id + '.'}}</td>
-                            <td>{{item.template_name}}</td>
+                            <td>{{item.name}}</td>
                             <td style="width: 50px">
                                 <a href="#" >Preview</a>
                             </td>
@@ -97,12 +97,4 @@
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script>
-      $(function () {
-           $("#myuploadstable").DataTable({
-             "responsive": true,
-             "autoWidth": false,
-           });
-      });
-    </script>
 }

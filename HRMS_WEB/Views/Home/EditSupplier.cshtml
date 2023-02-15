@@ -48,7 +48,7 @@
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form role="form" method="post" asp-action="CreateSupplier" asp-controller="Home">
+                <form role="form" method="post" asp-action="EditSupplier" asp-controller="Home">
                     <div class="card-body">
                         @* <div class="form-group"> *@
                         @*     <label asp-for="Id">ID</label> *@
@@ -64,8 +64,9 @@
                             <select class="select2"
                                     multiple="multiple" 
                                     data-placeholder="Select Templates" 
+                                    asp-for="NewlySelectedIdList"
                                     style="width: 100%;"
-                                     asp-items="@(new MultiSelectList(Model.Templates, "Id", "Name", Model.SelectedIdList))">
+                                     asp-items="@(new MultiSelectList(Model.Templates, "ID", "Name", Model.AlreadySelectedIdList))">
                             </select>
                         </div>
                     </div>

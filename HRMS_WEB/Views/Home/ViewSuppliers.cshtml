@@ -60,14 +60,14 @@
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody v-for="item in suppliers">
-                        <tr>
+                        <tbody>
+                        <tr v-for="item in suppliers">
                             <td style="width: 50px">{{item.id + '.'}}</td>
                             <td>{{item.name}}</td>
                             <td class="text-center" style="width: 100px">
                                 @* <a asp-action="ScrapePdf" asp-controller="Invoice" class="text-success text-sm fa fa-book-open mr-3"></a> *@
                                 <a  :href="'/Home/EditSupplier?id='+ item.id" class="text-sm fa fa-edit mr-3"></a>
-                                <a class="text-danger text-sm fa fa-trash mr-3" href="#"></a>
+                                <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Home/DeleteSupplier?id=' + item.id"></a>
                             </td>
                         </tr>
                         </tbody>
@@ -90,12 +90,4 @@
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script>
-      $(function () {
-           $("#myuploadstable").DataTable({
-             "responsive": true,
-             "autoWidth": false,
-           });
-      });
-    </script>
 }

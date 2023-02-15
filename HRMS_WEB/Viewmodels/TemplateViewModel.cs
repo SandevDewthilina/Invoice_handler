@@ -1,11 +1,13 @@
-﻿namespace HRMS_WEB.Viewmodels
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HRMS_WEB.Viewmodels
 {
     public class TemplateViewModel
     {
         public TemplateViewModel()
-        {
-            
-        }
+        {}
 
         public int Id { get; set; }
         public string Name { get; set; }

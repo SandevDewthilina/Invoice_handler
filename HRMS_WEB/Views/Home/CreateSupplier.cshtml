@@ -64,8 +64,9 @@
                             <select class="select2"
                                     multiple="multiple" 
                                     data-placeholder="Select Templates" 
+                                    asp-for="NewlySelectedIdList"
                                     style="width: 100%;"
-                                     asp-items="@(new SelectList(Model.Templates, "Id", "Name"))">
+                                       asp-items="@(new MultiSelectList(Model.Templates, "ID", "Name", Model.AlreadySelectedIdList))">
                             </select>
                         </div>
                     </div>
