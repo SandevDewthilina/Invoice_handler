@@ -146,10 +146,10 @@
     <!-- Select2 -->
     <script src="~/plugins/select2/js/select2.full.min.js"></script>
     <script>
-                 $('.select2').select2({
-                   theme: 'bootstrap4'
-                 })
-        </script>
+         $('.select2').select2({
+           theme: 'bootstrap4'
+         })
+    </script>
     <script>
         axios.get('/api/UploadsApi/GetUrlForUpload?Id=' + @ViewBag.Id).then(resp => {
             $('#mypdf').attr('src', '../'+resp.data.data)
