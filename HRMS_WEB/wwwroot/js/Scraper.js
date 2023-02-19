@@ -64,7 +64,7 @@ const app = createApp({
                 console.log(body)
                 axios.post('/ScraperApi/ScrapeTableOfPdf', body).then(resp => {
                     this.loading = false
-                    this.scrapeData.json.table = resp.data
+                    this.scrapeData.json.table = JSON.parse(resp.data)
                     console.log(this.scrapeData.json)
                 }).catch(err => {
                     alert(err.message)
