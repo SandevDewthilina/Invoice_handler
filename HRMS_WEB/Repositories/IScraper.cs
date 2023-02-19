@@ -1,7 +1,10 @@
-﻿namespace HRMS_WEB.Repositories
+﻿using System.Collections.Generic;
+using HRMS_WEB.Models;
+
+namespace HRMS_WEB.Repositories
 {
     public interface IScraper
     {
-        string Scrape(string input, string regex);
+        object Scrape(string filepath, List<RegexComponent> regexComponents);
     }
 }

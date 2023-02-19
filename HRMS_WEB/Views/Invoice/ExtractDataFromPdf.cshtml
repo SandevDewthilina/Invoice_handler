@@ -23,121 +23,161 @@
     </style>
 }
 
-
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h5 class="m-0 text-dark">@ViewData["Title"]</h5>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="#">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active">Process Invoice</li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-            <div class="row">
-                <div class="col-sm-12 text-left">
-                    <a class="btn btn-sm btn-primary" href="#" data-widget="control-sidebar">Show/Hide Results</a>
-                </div>
-            </div>
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid" id="main">
-            <div class="form-group">
-                <div class="row align-items-end">
-                    <div class="col-sm-10">
-                        <label>Select Template Assigned to Start Extracting</label>
-                        <select class="form-control select2"
-                                id="myselect"
-                                style="width: 100%;">
-                            <option value="0" selected="selected">Select Template</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-2 text-right">
-                        <div class="btn btn-block btn-outline-danger">Extract</div>
+<div id="pane">
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h5 class="m-0 text-dark">@ViewData["Title"]</h5>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item">
+                                <a href="#">Home</a>
+                            </li>
+                            <li class="breadcrumb-item active">Process Invoice</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+                <div class="row">
+                    <div class="col-sm-12 text-left">
+                        <a class="btn btn-sm btn-primary" href="#" data-widget="control-sidebar">Show/Hide Results</a>
                     </div>
                 </div>
-            </div>
-            <iframe src="" frameborder="0" id="mypdf"></iframe>
-        </div><!--/. container-fluid -->
-    </section>
-    <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
-<!-- Control Sidebar -->
-<aside class="control-sidebar control-sidebar-light elevation-4" style="width: 25%">
-    <!-- Control sidebar content goes here -->
-    <div class="p-0">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card card-primary card-outline card-outline-tabs">
-                    <div class="card-header p-0 border-bottom-0">
-                        <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">FINAL RESULTS</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="custom-tabs-four-profile-tab" data-toggle="pill" href="#custom-tabs-four-profile" role="tab" aria-controls="custom-tabs-four-profile" aria-selected="false">JSON</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body" style="max-height: 80vh; overflow-y: scroll">
-                        <div class="tab-content" id="custom-tabs-four-tabContent">
-                            <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
-                                <div class="card card-outline card-primary collapsed-card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Fields <i class="ml-3 fa fa-pen"></i></h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <!-- /.card-tools -->
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body" style="display: none;">
-                                        The body of the card
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-                                <div class="card card-outline card-primary collapsed-card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Tables <i class="ml-3 fa fa-table"></i></h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <!-- /.card-tools -->
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body" style="display: none;">
-                                        The body of the card
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
-
-                            </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid" id="main">
+                <div class="form-group">
+                    <div class="row align-items-end">
+                        <div class="col-sm-10">
+                            <label>Select Template Assigned to Start Extracting</label>
+                            <select class="form-control select2"
+                                    id="myselect"
+                                    style="width: 100%;">
+                                <option value="0" selected="selected">Select Template</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2 text-right">
+                            <div class="btn btn-block btn-outline-danger extract-btn">Extract</div>
                         </div>
                     </div>
-                    <!-- /.card -->
+                </div>
+                <iframe src="" frameborder="0" id="mypdf"></iframe>
+            </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-light elevation-4" style="width: 40%" id="sidepane">
+        <!-- Control sidebar content goes here -->
+        <div class="p-0">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card card-primary card-outline card-outline-tabs">
+                        <div class="card-header p-0 border-bottom-0">
+                            <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">FINAL RESULTS</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="custom-tabs-four-profile-tab" data-toggle="pill" href="#custom-tabs-four-profile" role="tab" aria-controls="custom-tabs-four-profile" aria-selected="false">JSON</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body" style="max-height: 80vh; overflow-y: scroll">
+                            <div class="col text-right p-2">
+                                  <div class="btn btn-primary btn-sm export-btn" v-on:click="clickExport">Export To CSV</div>
+                            </div>
+                            <div class="tab-content" id="custom-tabs-four-tabContent">
+                                <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Fields</h3>
+                                            <div class="card-tools">
+                                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </div>
+                                            <!-- /.card-tools -->
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div class="col-sm-12">
+                                                <div class="row mb-2" v-for="item in getFieldList">
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="form-control" :value="item.key" disabled>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" :value="item.value">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Tables</h3>
+
+                                            <div class="card-tools">
+                                                <button type="button" class="btn btn-tool">
+                                                    <div class="btn btn-sm" v-on:click="fetchTables"><i class="fas fa-sync-alt"></i> Fetch Tables</div>
+                                                </button>
+                                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </div>
+                                            <!-- /.card-tools -->
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div v-if="loading" class="col text-center">
+                                                Loading, Please wait!
+                                            </div>
+                                            <div v-else style="max-width: 100%; overflow-x: scroll">
+                                                <table class="table table-bordered table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th v-for="head in getTableHeadings">{{head}}</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr v-for="row in getTableContent">
+                                                        <td v-for="item in row">{{item}}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header">
+                                            Results
+                                        </div>
+                                        <div class="card-body">
+                                            <textarea class="form-control" style="height: 500px; font-size: 12px">{{getJson}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</aside>
+    </aside>
+</div>
 <!-- /.control-sidebar -->
 <!-- PAGE SCRIPTS -->
 
@@ -159,10 +199,10 @@
             resp.data.data.forEach(temp => {
                 let option = document.createElement("option");
                 option.text = temp.name
-                option.value = temp.name
+                option.value = temp.id
                 select.add(option)
             })            
         }).catch(err => alert(err.message))
     </script>
-    @* <script defer type="module" src="~/js/MyUploads.js"></script> *@
+    <script type="module" src="~/js/Scraper.js"></script>
 }
