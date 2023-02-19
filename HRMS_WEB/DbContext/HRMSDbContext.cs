@@ -11,6 +11,7 @@ namespace HRMS_WEB.DbContext
     {
         public HRMSDbContext(DbContextOptions<HRMSDbContext> options) : base(options)
         {
+            
         }
 
         // Entities
