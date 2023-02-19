@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace HRMS_WEB.ApiControllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class ScraperApiController:Controller
     {
         private readonly HRMSDbContext _db;
@@ -23,6 +23,20 @@ namespace HRMS_WEB.ApiControllers
             _db = db;
             _scraper = scraper;
         }
+        public async Task<IActionResult> ScrapeUploadForTemplate(int uploadId, int templateId)
+        {
+            // get the template
+            var template = await _db.Template.FirstOrDefaultAsync(t => t.ID == templateId);
+            var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == uploadId);
+            var regexComponents = await _db.RegexComponent.Where(c => c.TemplateID == templateId).ToListAsync();
+            var results = _scraper.Scrape(upload.FilePath, regexComponents);
+            return Json(new
+            {
+                success = true,
+                data = results
+            });
+        }
+        
         [HttpPost]
         public async Task<IActionResult> ScrapeTableOfPdf(ScrapeBody body)
         {
@@ -35,11 +49,10 @@ namespace HRMS_WEB.ApiControllers
                 return Json(await response.Content.ReadAsStringAsync());
             }
         }
-        
-        
     }
-    
-    public class ScrapeBody{
+
+    public class ScrapeBody
+    {
         public string url { get; set; }
         public string filename { get; set; }
         public int upload_name { get; set; }
