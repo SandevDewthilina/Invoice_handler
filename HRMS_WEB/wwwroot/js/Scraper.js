@@ -57,12 +57,12 @@ const app = createApp({
             axios.get('/api/UploadsApi/GetUploadForId?Id=' + uploadId).then(resp => {
                 console.log(resp.data.data)
                 const body = {
-                    url: 'http://localhost/' + resp.data.data.filePath,
+                    url: 'http://localhost:8100/' + resp.data.data.filePath,
                     filename: resp.data.data.fileName,
                     upload_name: resp.data.data.id
                 }
                 console.log(body)
-                axios.post('http://localhost:5000/ExtractData', body).then(resp => {
+                axios.post('/ScraperApi/ScrapeTableOfPdf', body).then(resp => {
                     this.loading = false
                     this.scrapeData.json.table = resp.data
                     console.log(this.scrapeData.json)
