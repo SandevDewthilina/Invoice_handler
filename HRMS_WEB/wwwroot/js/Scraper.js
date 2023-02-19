@@ -62,7 +62,7 @@ const app = createApp({
                     upload_name: resp.data.data.id
                 }
                 console.log(body)
-                axios.post('/ScraperApi/ScrapeTableOfPdf', body).then(resp => {
+                axios.post('/api/ScraperApi/ScrapeTableOfPdf', body).then(resp => {
                     this.loading = false
                     this.scrapeData.json.table = JSON.parse(resp.data)
                     console.log(this.scrapeData.json)
