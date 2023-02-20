@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
@@ -14,6 +15,7 @@ using HRMS_WEB.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Ocsp;
 
@@ -24,12 +26,14 @@ namespace HRMS_WEB.Controllers
         private readonly IStorageRepository _storageRepository;
         private readonly HRMSDbContext _db;
         private readonly IScraper _scraper;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public InvoiceController(IStorageRepository storageRepository, HRMSDbContext db, IScraper scraper)
+        public InvoiceController(IStorageRepository storageRepository, HRMSDbContext db, IScraper scraper, IServiceScopeFactory serviceScopeFactory)
         {
             _storageRepository = storageRepository;
             _db = db;
             _scraper = scraper;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public IActionResult ExtractDataFromPdf(int Id)
@@ -131,15 +135,40 @@ namespace HRMS_WEB.Controllers
                         .Where(c => c.TemplateID == assignment.TemplateID)
                         .ToListAsync());
                     var fieldJson = JsonConvert.SerializeObject(fieldList);
-                    // fetch tableData from backend
-                    var tableJson = await FetchTableDataFromBackendForUpload(upload);
+                    // fetch tableData from backend by a background thread
+                    
+                    var task = Task.Run(async () =>
+                    {
+                        using (var scope = _serviceScopeFactory.CreateScope())
+                        {
+                            var body = new
+                            {
+                                url = "http://localhost:8100/" + upload.FilePath,
+                                filename = upload.FileName,
+                                upload_name = upload.ID
+                            };
+                            var json = JsonConvert.SerializeObject(body);
+                            using (var client = new HttpClient())
+                            {
+                                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                                var response =  await client.PostAsync("http://localhost:5000/ExtractData", content);
+                                response.EnsureSuccessStatusCode();
+                                var tableJson = await response.Content.ReadAsStringAsync();
+                                var db = scope.ServiceProvider.GetService<HRMSDbContext>();
+                                var ud = await db.UploadData.FirstOrDefaultAsync(ud => ud.UploadID == upload.ID);
+                                ud.TableJson = tableJson;
+                                db.UploadData.Update(ud);
+                                await db.SaveChangesAsync();
+                            }
+                        }
+
+                    });
                     
                     // save detected templateId to uploadData
                     var uploadData = new UploadData()
                     {
                         UploadID = upload.ID,
                         DetectedTemplateID = assignment.TemplateID,
-                        TableJson = tableJson,
                         FieldJson = fieldJson
                     };
                     await _db.UploadData.AddAsync(uploadData);
@@ -150,24 +179,6 @@ namespace HRMS_WEB.Controllers
             }
 
             return RedirectToAction("Index", "Home");
-        }
-
-        public async Task<string> FetchTableDataFromBackendForUpload(Upload upload)
-        {
-            var body = new
-            {
-                url = "http://localhost:8100/" + upload.FilePath,
-                filename = upload.FileName,
-                upload_name = upload.ID
-            };
-            var json = JsonConvert.SerializeObject(body);
-            using (var client = new HttpClient())
-            {
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
-            }
         }
     }
 }

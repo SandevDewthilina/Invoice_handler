@@ -15,8 +15,6 @@
     uppy.use(Uppy.Dashboard, {
         target: '#uppyDashboard',
         inline: true,
-        timeout: 0,
-        limit: 1,
         height: 600,
         width: '100%',
         metaFields: [
