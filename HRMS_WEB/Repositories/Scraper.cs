@@ -19,7 +19,7 @@ namespace HRMS_WEB.Repositories
             _hostEnvironment = hostEnvironment;
         }
 
-        public object Scrape(string filepath, List<RegexComponent> regexComponents)
+        public List<object> Scrape(string filepath, List<RegexComponent> regexComponents)
         {
             string content = "";
             string fullPath = Path.Combine(_hostEnvironment.WebRootPath, filepath);

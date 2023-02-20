@@ -92,15 +92,18 @@ namespace HRMS_WEB.Controllers
             var alreadyAssignedTemplates = _db.SupplierTemplateAssignment.Where(a => a.SupplierID == model.Id);
             _db.SupplierTemplateAssignment.RemoveRange(alreadyAssignedTemplates);
 
-            // create new assignments
-            foreach (int tempId in model.NewlySelectedIdList)
+            if (model.NewlySelectedIdList != null )
             {
-                var assignement = new SupplierTemplateAssignment()
+                // create new assignments
+                foreach (int tempId in model.NewlySelectedIdList)
                 {
-                    SupplierID = model.Id,
-                    TemplateID = tempId
-                };
-                await _db.SupplierTemplateAssignment.AddAsync(assignement);
+                    var assignement = new SupplierTemplateAssignment()
+                    {
+                        SupplierID = model.Id,
+                        TemplateID = tempId
+                    };
+                    await _db.SupplierTemplateAssignment.AddAsync(assignement);
+                }   
             }
 
             await _db.SaveChangesAsync();

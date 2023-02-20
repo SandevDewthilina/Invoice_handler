@@ -1,6 +1,7 @@
 ﻿using System;
+using HRMS_WEB.Models;
 
-namespace HRMS_WEB.Models
+namespace HRMS_WEB.Entities
 {
     public class Upload
     {
@@ -8,7 +9,7 @@ namespace HRMS_WEB.Models
         public string FileName { get; set; }
         public DateTime UploadedDate { get; set; }
         public string FilePath { get; set; }
-        public int SupplierID { get; set; }
+        public int? SupplierID { get; set; }
 
         public Supplier Supplier { get; set; }
     }

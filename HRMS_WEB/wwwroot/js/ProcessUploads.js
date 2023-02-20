@@ -1,4 +1,4 @@
-import {createApp} from '../lib/vue/dist/vue.esm-browser.js';
+﻿import {createApp} from '../lib/vue/dist/vue.esm-browser.js';
 
 
 const app = createApp({
@@ -19,12 +19,11 @@ const app = createApp({
     },
     created() {
         axios.get('/api/UploadsApi/GetFileUploads').then(resp => {
-            let datalist = resp.data.data
-            datalist.forEach(item => {
-                item.status = item.supplier_name !== null
+            let list = resp.data.data;
+            list.forEach(item => {
+                item.status = item.supplier_name !== null;
             })
-            this._myUploadList = datalist
-            console.log(this._myUploadList)
+            this._myUploadList = list
             $(document).ready(function () {
                 $("#myuploadstable").DataTable({
                     "responsive": true,

@@ -12,8 +12,5 @@ namespace HRMS_WEB.ViewModels
         {
             
         }
-        
-        public int SupplierID { get; set; }
-        public List<Supplier> SupplierList { get; set; }
     }
 }

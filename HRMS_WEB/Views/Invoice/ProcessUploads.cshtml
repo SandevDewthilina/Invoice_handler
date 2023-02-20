@@ -74,14 +74,12 @@
                             <td>{{item.upload_date}}</td>
                             <td>{{item.supplier_name}}</td>
                             <td>
-                                <div class="badge badge-success" v-if="item.status">Processed</div>
-                                <div class="badge badge-danger" v-else>Pending</div>
+                                <div v-if="item.status"></div>
                             </td>
                             <td class="text-center">
                                 <a :href="'/Invoice/ExtractDataFromPdf?Id=' + item.id" class="text-success text-sm fa fa-book-open mr-3"></a>
                                 <a :href="'/Invoice/EditUpload?Id=' + item.id" class="text-sm fa fa-edit mr-3"></a>
                                 <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Invoice/DeleteUpload?Id=' + item.id"></a>
-                                <a v-if="!item.status" class="text-s mr-3" :href="'/Invoice/ProcessUploadForId?Id=' + item.id">Process</a>
                             </td>
                         </tr>
                         </tbody>
@@ -103,5 +101,5 @@
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script  type="module" src="~/js/MyUploads.js"></script>
+    <script  type="module" src="~/js/ProcessUploads.js"></script>
 }

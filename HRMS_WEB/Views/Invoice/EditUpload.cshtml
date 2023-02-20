@@ -66,7 +66,7 @@
                             <select class="form-control select2"
                                     style="width: 100%;"
                                     asp-for="SupplierID"
-                                    asp-items="@(new SelectList(Model.SupplierList, "ID", "Name", new int[] {Model.SupplierID}))">
+                                    asp-items="@(new SelectList(Model.SupplierList, "ID", "Name", new int?[] {Model.SupplierID}))">
                                 <option value="0">Select Supplier</option>
                             </select>
                         </div>

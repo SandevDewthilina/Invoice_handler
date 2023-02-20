@@ -10,7 +10,7 @@ namespace HRMS_WEB.Viewmodels
         public string FileName { get; set; }
         public DateTime UploadedDate { get; set; }
         public string FilePath { get; set; }
-        public int SupplierID { get; set; }
+        public int? SupplierID { get; set; }
         
         public List<Supplier> SupplierList { get; set; }
     }

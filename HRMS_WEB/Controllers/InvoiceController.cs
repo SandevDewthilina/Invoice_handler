@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
+using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 using HRMS_WEB.Repositories;
 using HRMS_WEB.Viewmodels;
@@ -10,6 +14,7 @@ using HRMS_WEB.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Ocsp;
 
 namespace HRMS_WEB.Controllers
@@ -18,11 +23,13 @@ namespace HRMS_WEB.Controllers
     {
         private readonly IStorageRepository _storageRepository;
         private readonly HRMSDbContext _db;
+        private readonly IScraper _scraper;
 
-        public InvoiceController(IStorageRepository storageRepository, HRMSDbContext db)
+        public InvoiceController(IStorageRepository storageRepository, HRMSDbContext db, IScraper scraper)
         {
             _storageRepository = storageRepository;
             _db = db;
+            _scraper = scraper;
         }
 
         public IActionResult ExtractDataFromPdf(int Id)
@@ -31,23 +38,16 @@ namespace HRMS_WEB.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Upload()
+        public IActionResult Upload()
         {
-            return View(new ImageUploadViewModel()
-            {
-                SupplierList = await _db.Supplier.ToListAsync()
-            });
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Upload(ImageUploadViewModel viewModel)
         {
-            if (viewModel.SupplierID == 0)
-            {
-                throw new Exception("No matching supplier");
-            }
-
             var files = Request.Form.Files;
+
             foreach (var file in files)
             {
                 await _storageRepository.SaveFile(file);
@@ -56,12 +56,14 @@ namespace HRMS_WEB.Controllers
                     FileName = file.FileName,
                     FilePath = Path.Combine("Invoices", file.FileName),
                     UploadedDate = DateTime.Now,
-                    SupplierID = viewModel.SupplierID
+                    SupplierID = null
                 };
                 await _db.Upload.AddAsync(upload);
+                await _db.SaveChangesAsync();
+                var results = await ProcessUploadForId(upload.ID);
             }
 
-            await _db.SaveChangesAsync();
+            
             return Ok();
         }
 
@@ -99,6 +101,73 @@ namespace HRMS_WEB.Controllers
         {
             await _storageRepository.DeleteUpload(Id);
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult ProcessUploads()
+        {
+            throw new Exception("Not completed page");
+            return View();
+        }
+
+        public async Task<IActionResult> ProcessUploadForId(int Id)
+        {
+            // pdf content
+            var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
+            var supplierRegexList = await _db.RegexComponent.Where(rc => rc.Key.Equals("Supplier")).ToListAsync();
+
+            foreach (var regexComponent in supplierRegexList)
+            {
+                var results = _scraper.Scrape(upload.FilePath, new List<RegexComponent>() {regexComponent});
+                if (results.Count > 0)
+                {
+                    // get the supplier owner for the template that owns regexCompenent
+                    var assignment = await _db.SupplierTemplateAssignment
+                        .FirstOrDefaultAsync(a => a.TemplateID == regexComponent.TemplateID);
+                    upload.SupplierID = assignment.SupplierID;
+                    _db.Upload.Update(upload);
+
+                    // fetch fieldData from Regex
+                    var fieldList = _scraper.Scrape(upload.FilePath, await _db.RegexComponent
+                        .Where(c => c.TemplateID == assignment.TemplateID)
+                        .ToListAsync());
+                    var fieldJson = JsonConvert.SerializeObject(fieldList);
+                    // fetch tableData from backend
+                    var tableJson = await FetchTableDataFromBackendForUpload(upload);
+                    
+                    // save detected templateId to uploadData
+                    var uploadData = new UploadData()
+                    {
+                        UploadID = upload.ID,
+                        DetectedTemplateID = assignment.TemplateID,
+                        TableJson = tableJson,
+                        FieldJson = fieldJson
+                    };
+                    await _db.UploadData.AddAsync(uploadData);
+                    await _db.SaveChangesAsync();                   
+                    
+                    break;
+                }
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<string> FetchTableDataFromBackendForUpload(Upload upload)
+        {
+            var body = new
+            {
+                url = "http://localhost:8100/" + upload.FilePath,
+                filename = upload.FileName,
+                upload_name = upload.ID
+            };
+            var json = JsonConvert.SerializeObject(body);
+            using (var client = new HttpClient())
+            {
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
         }
     }
 }

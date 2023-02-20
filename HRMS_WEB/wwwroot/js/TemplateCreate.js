@@ -6,7 +6,13 @@ const app = createApp({
         return {
             form: {
                 template_name: '',
-                templateRegexList: []
+                templateRegexList: [
+                    {
+                        id : 1,
+                        key: 'Supplier',
+                        value: ''
+                    }
+                ]
             }
         }
     },
@@ -18,6 +24,7 @@ const app = createApp({
             return this.form.template_name
         },
         getRegexComponents() {
+            console.log(this.form.templateRegexList)
             return this.form.templateRegexList
         }
     },
@@ -42,6 +49,11 @@ const app = createApp({
         },
         submit(e) {
             e.preventDefault()
+            let supplierElement = this.form.templateRegexList.find(i => i.id === 1)
+            if (supplierElement.value === '') {
+                alert("please enter regex for the Supplier Tag")
+                return
+            }
             axios.post('/api/MasterDataApi/CreateTemplate', this.form).then(resp => {
                 if(resp.data.success) {
                     window.location.href = '/Home/ViewTemplates'
