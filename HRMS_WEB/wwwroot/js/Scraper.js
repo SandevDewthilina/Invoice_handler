@@ -98,13 +98,15 @@ const app = createApp({
         }
     },
     created() {
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        const uploadId = params.Id
         $('.extract-btn').click(() => {
             console.log('clicked')
-            const params = new Proxy(new URLSearchParams(window.location.search), {
-                get: (searchParams, prop) => searchParams.get(prop),
-            });
+            
             const templateId = $('#myselect').find(":selected").val()
-            const uploadId = params.Id
+            
 
             axios.get(`/api/ScraperApi/ScrapeUploadForTemplate?uploadId=${uploadId}&templateId=${templateId}`).then(resp => {
                 this.scrapeData.json.fields = resp.data.data
@@ -113,7 +115,29 @@ const app = createApp({
                 alert(err.message)
             })
         })
-        this.fetchTables()
+        
+        axios.get('/api/UploadsApi/GetUploadDataForUploadId?Id=' + uploadId).then(resp => {
+            const uploadData = resp.data.data
+            console.log(uploadData)
+
+            if (uploadData.fieldJson !== null) {
+                // set field list
+                JSON.parse(uploadData.fieldJson).forEach(item => {
+                    this.scrapeData.json.fields.push(
+                        {
+                            key: item.Key,
+                            value: item.Value
+                        }
+                    )
+                })
+            }
+            
+            // set table
+            this.scrapeData.json.table = JSON.parse(uploadData.tableJson)
+            
+        }).catch(err => {
+            alert('Data Prefetching failed')
+        })
     }
 
 });

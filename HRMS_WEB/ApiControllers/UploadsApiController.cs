@@ -67,6 +67,11 @@ namespace HRMS_WEB.ApiControllers
                 data = templates
             });
         }
-        
+
+        public async Task<IActionResult> GetUploadDataForUploadId(int Id)
+        {
+            var uploadData = await _db.UploadData.FirstOrDefaultAsync(ud => ud.UploadID == Id);
+            return Json(new {success = true, data = uploadData});
+        }
     }
 }

@@ -60,7 +60,7 @@
                             <th>File name</th>
                             <th>Uploaded at</th>
                             <th>Supplier name</th>
-                            <th>Status</th>
+                            <th>Supplier Detection</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -74,14 +74,14 @@
                             <td>{{item.upload_date}}</td>
                             <td>{{item.supplier_name}}</td>
                             <td>
-                                <div class="badge badge-success" v-if="item.status">Processed</div>
+                                <div class="badge badge-success" v-if="item.status">Detected</div>
                                 <div class="badge badge-danger" v-else>Pending</div>
                             </td>
                             <td class="text-center">
                                 <a :href="'/Invoice/ExtractDataFromPdf?Id=' + item.id" class="text-success text-sm fa fa-book-open mr-3"></a>
                                 <a :href="'/Invoice/EditUpload?Id=' + item.id" class="text-sm fa fa-edit mr-3"></a>
                                 <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Invoice/DeleteUpload?Id=' + item.id"></a>
-                                <a v-if="!item.status" class="text-s mr-3" :href="'/Invoice/ProcessUploadForId?Id=' + item.id">Process</a>
+                                <a class="text-s mr-3" :href="'/Invoice/ProcessUploadForIdWithoutSupplierDetection?Id=' + item.id">Process Tables</a>
                             </td>
                         </tr>
                         </tbody>

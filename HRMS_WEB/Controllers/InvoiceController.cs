@@ -67,7 +67,7 @@ namespace HRMS_WEB.Controllers
                 var results = await ProcessUploadForId(upload.ID);
             }
 
-            
+
             return Ok();
         }
 
@@ -129,14 +129,15 @@ namespace HRMS_WEB.Controllers
                         .FirstOrDefaultAsync(a => a.TemplateID == regexComponent.TemplateID);
                     upload.SupplierID = assignment.SupplierID;
                     _db.Upload.Update(upload);
+                    await _db.SaveChangesAsync();
 
                     // fetch fieldData from Regex
                     var fieldList = _scraper.Scrape(upload.FilePath, await _db.RegexComponent
                         .Where(c => c.TemplateID == assignment.TemplateID)
                         .ToListAsync());
                     var fieldJson = JsonConvert.SerializeObject(fieldList);
+
                     // fetch tableData from backend by a background thread
-                    
                     var task = Task.Run(async () =>
                     {
                         using (var scope = _serviceScopeFactory.CreateScope())
@@ -151,7 +152,7 @@ namespace HRMS_WEB.Controllers
                             using (var client = new HttpClient())
                             {
                                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                                var response =  await client.PostAsync("http://localhost:5000/ExtractData", content);
+                                var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
                                 response.EnsureSuccessStatusCode();
                                 var tableJson = await response.Content.ReadAsStringAsync();
                                 var db = scope.ServiceProvider.GetService<HRMSDbContext>();
@@ -161,9 +162,8 @@ namespace HRMS_WEB.Controllers
                                 await db.SaveChangesAsync();
                             }
                         }
-
                     });
-                    
+
                     // save detected templateId to uploadData
                     var uploadData = new UploadData()
                     {
@@ -172,11 +172,48 @@ namespace HRMS_WEB.Controllers
                         FieldJson = fieldJson
                     };
                     await _db.UploadData.AddAsync(uploadData);
-                    await _db.SaveChangesAsync();                   
-                    
+                    await _db.SaveChangesAsync();
+
                     break;
                 }
             }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> ProcessUploadForIdWithoutSupplierDetection(int Id)
+        {
+            var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
+            // fetch tableData from backend by a background thread
+            var task = Task.Run(async () =>
+            {
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var body = new
+                    {
+                        url = "http://localhost:8100/" + upload.FilePath,
+                        filename = upload.FileName,
+                        upload_name = upload.ID
+                    };
+                    var json = JsonConvert.SerializeObject(body);
+                    using (var client = new HttpClient())
+                    {
+                        var content = new StringContent(json, Encoding.UTF8, "application/json");
+                        var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
+                        response.EnsureSuccessStatusCode();
+                        var tableJson = await response.Content.ReadAsStringAsync();
+                        var db = scope.ServiceProvider.GetService<HRMSDbContext>();
+
+                        var ud = new UploadData()
+                        {
+                            UploadID = upload.ID,
+                            TableJson = tableJson
+                        };
+                        await db.UploadData.AddAsync(ud);
+                        await db.SaveChangesAsync();
+                    }
+                }
+            });
 
             return RedirectToAction("Index", "Home");
         }
