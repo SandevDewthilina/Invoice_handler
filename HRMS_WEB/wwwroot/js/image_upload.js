@@ -15,6 +15,8 @@
     uppy.use(Uppy.Dashboard, {
         target: '#uppyDashboard',
         inline: true,
+        timeout: 0,
+        limit: 1,
         height: 600,
         width: '100%',
         metaFields: [
@@ -30,8 +32,6 @@
     uppy.use(Uppy.XHRUpload, {
         endpoint: '/Invoice/Upload',
         formData: true,
-        timeout: 0,
-        limit: 1,
         fieldName: 'files[]',
     })
     uppy.on('complete', result => {
