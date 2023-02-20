@@ -30,6 +30,8 @@
     uppy.use(Uppy.XHRUpload, {
         endpoint: '/Invoice/Upload',
         formData: true,
+        timeout: 0,
+        limit: 1,
         fieldName: 'files[]',
     })
     uppy.on('complete', result => {
