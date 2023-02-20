@@ -34,13 +34,11 @@ namespace HRMS_WEB.Repositories
             var path = Path.Combine(_hostingEnvironment.WebRootPath, upload.FilePath);
             if ( System.IO.File.Exists(path))
             {
-                // delete from databaseo
-                _db.Upload.Remove(upload);
-                await _db.SaveChangesAsync();
-            
                 System.IO.File.Delete(path);
             }
-            
+            // delete from databaseo
+            _db.Upload.Remove(upload);
+            await _db.SaveChangesAsync();
         }
     }
 }
