@@ -7,15 +7,17 @@
 
 <div class="login-box">
     <div class="login-logo">
-        <a href="#">
-            <b>Structa Engineering</b>
-        </a>
+        @* <a href="#"> *@
+        @*     <b>Evision Microsystems</b> *@
+        @* </a> *@
     </div>
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
             <p class="login-box-msg">Sign in to start your session</p>
-            <img src="~/struct.png" style="width: 250px; height: 50px;"  class="m-3"/>
+            <div class="col text-center">
+                 <img src="~/assets/logo_evision.png" style="width: 180px; height: 50px;"  class="m-3"/>
+            </div>
             <form asp-action="Login" asp-controller="Account">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="input-group mb-3">
@@ -53,22 +55,22 @@
                 </div>
             </form>
 
-            <div class="social-auth-links text-center mb-3">
-                <p>- OR -</p>
-                <a asp-action="Register" asp-controller="Account" class="btn btn-block btn-primary">
-                    Register
-                </a>
-            </div>
-            <!-- /.social-auth-links -->
-
-            <p class="mb-1">
-                <a href="#">I forgot my password</a>
-            </p>
+            @* <div class="social-auth-links text-center mb-3"> *@
+            @*     <p>- OR -</p> *@
+            @*     <a asp-action="Register" asp-controller="Account" class="btn btn-block btn-primary"> *@
+            @*         Register *@
+            @*     </a> *@
+            @* </div> *@
+            @* <!-- /.social-auth-links --> *@
+            @* *@
+            @* <p class="mb-1"> *@
+            @*     <a href="#">I forgot my password</a> *@
+            @* </p> *@
         </div>
         <!-- /.login-card-body -->
     </div>
-    <div class="login-logo" style="font-size: 25px">
-        <a href="#"><b>Powered by ECODE (Pvt).Ltd</b></a>
-    </div>
+    @* <div class="login-logo"> *@
+    @*     <a href="#"><b>Powered by Evision Microsystems (Pvt)Ltd</b></a> *@
+    @* </div> *@
 </div>
 <!-- /.login-box -->
