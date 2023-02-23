@@ -27,13 +27,24 @@ namespace HRMS_WEB.Controllers
         private readonly HRMSDbContext _db;
         private readonly IScraper _scraper;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ITableExtractor _tableExtractor;
+        private readonly IFieldExtractor _fieldExtractor;
 
-        public InvoiceController(IStorageRepository storageRepository, HRMSDbContext db, IScraper scraper, IServiceScopeFactory serviceScopeFactory)
+        public InvoiceController(
+            IStorageRepository storageRepository,
+            HRMSDbContext db,
+            IScraper scraper,
+            IServiceScopeFactory serviceScopeFactory,
+            ITableExtractor tableExtractor,
+            IFieldExtractor fieldExtractor
+        )
         {
             _storageRepository = storageRepository;
             _db = db;
             _scraper = scraper;
             _serviceScopeFactory = serviceScopeFactory;
+            _tableExtractor = tableExtractor;
+            _fieldExtractor = fieldExtractor;
         }
 
         public IActionResult ExtractDataFromPdf(int Id)
@@ -121,59 +132,13 @@ namespace HRMS_WEB.Controllers
 
             foreach (var regexComponent in supplierRegexList)
             {
-                var results = _scraper.Scrape(upload.FilePath, new List<RegexComponent>() {regexComponent});
+                var results = await _scraper.Scrape(upload.FilePath, new List<RegexComponent>() {regexComponent}, upload);
                 if (results.Count > 0)
                 {
-                    // get the supplier owner for the template that owns regexCompenent
-                    var assignment = await _db.SupplierTemplateAssignment
-                        .FirstOrDefaultAsync(a => a.TemplateID == regexComponent.TemplateID);
-                    upload.SupplierID = assignment.SupplierID;
-                    _db.Upload.Update(upload);
-                    await _db.SaveChangesAsync();
-
-                    // fetch fieldData from Regex
-                    var fieldList = _scraper.Scrape(upload.FilePath, await _db.RegexComponent
-                        .Where(c => c.TemplateID == assignment.TemplateID)
-                        .ToListAsync());
-                    var fieldJson = JsonConvert.SerializeObject(fieldList);
-
-                    // fetch tableData from backend by a background thread
-                    var task = Task.Run(async () =>
-                    {
-                        using (var scope = _serviceScopeFactory.CreateScope())
-                        {
-                            var body = new
-                            {
-                                url = "http://localhost:8100/" + upload.FilePath,
-                                filename = upload.FileName,
-                                upload_name = upload.ID
-                            };
-                            var json = JsonConvert.SerializeObject(body);
-                            using (var client = new HttpClient())
-                            {
-                                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                                var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
-                                response.EnsureSuccessStatusCode();
-                                var tableJson = await response.Content.ReadAsStringAsync();
-                                var db = scope.ServiceProvider.GetService<HRMSDbContext>();
-                                var ud = await db.UploadData.FirstOrDefaultAsync(ud => ud.UploadID == upload.ID);
-                                ud.TableJson = tableJson;
-                                db.UploadData.Update(ud);
-                                await db.SaveChangesAsync();
-                            }
-                        }
-                    });
-
-                    // save detected templateId to uploadData
-                    var uploadData = new UploadData()
-                    {
-                        UploadID = upload.ID,
-                        DetectedTemplateID = assignment.TemplateID,
-                        FieldJson = fieldJson
-                    };
-                    await _db.UploadData.AddAsync(uploadData);
-                    await _db.SaveChangesAsync();
-
+                    // fetch fields and save to db
+                    await _fieldExtractor.ExtractFields(upload, regexComponent);
+                    // fetch tables and save to db using a job
+                    _tableExtractor.ExtractTables(upload);
                     break;
                 }
             }
@@ -184,36 +149,9 @@ namespace HRMS_WEB.Controllers
         public async Task<IActionResult> ProcessUploadForIdWithoutSupplierDetection(int Id)
         {
             var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
-            // fetch tableData from backend by a background thread
-            var task = Task.Run(async () =>
-            {
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var body = new
-                    {
-                        url = "http://localhost:8100/" + upload.FilePath,
-                        filename = upload.FileName,
-                        upload_name = upload.ID
-                    };
-                    var json = JsonConvert.SerializeObject(body);
-                    using (var client = new HttpClient())
-                    {
-                        var content = new StringContent(json, Encoding.UTF8, "application/json");
-                        var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
-                        response.EnsureSuccessStatusCode();
-                        var tableJson = await response.Content.ReadAsStringAsync();
-                        var db = scope.ServiceProvider.GetService<HRMSDbContext>();
 
-                        var ud = new UploadData()
-                        {
-                            UploadID = upload.ID,
-                            TableJson = tableJson
-                        };
-                        await db.UploadData.AddAsync(ud);
-                        await db.SaveChangesAsync();
-                    }
-                }
-            });
+            // fetch tableData from backend by a background thread
+            _tableExtractor.ExtractTables(upload);
 
             return RedirectToAction("Index", "Home");
         }

@@ -152,7 +152,6 @@ namespace HRMS_WEB.Controllers
             var template = await _db.Template.FirstOrDefaultAsync(s => s.ID == Id);
             _db.Template.Remove(template);
             await _db.SaveChangesAsync();
-            return RedirectToAction("ViewSuppliers");
             return RedirectToAction("ViewTemplates");
         }
     }

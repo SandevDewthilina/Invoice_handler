@@ -56,7 +56,9 @@ namespace HRMS_WEB.ApiControllers
                         {
                             id = r.ID,
                             Key = r.Key,
-                            value = r.Value
+                            value = r.Value,
+                            area = r.Area,
+                            isArea = r.IsArea
                         }).ToListAsync()
                 }
             };
@@ -79,6 +81,8 @@ namespace HRMS_WEB.ApiControllers
                 {
                     Key = regexItem.key,
                     Value = regexItem.value,
+                    Area = regexItem.area,
+                    IsArea = regexItem.isArea,
                     TemplateID = template.ID
                 };
                 await _db.RegexComponent.AddAsync(regexComponent);
@@ -87,7 +91,7 @@ namespace HRMS_WEB.ApiControllers
             await _db.SaveChangesAsync();
             return Json(new {success = true});
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> EditTemplate(int Id, CreateTemplateModel model)
         {
@@ -99,13 +103,15 @@ namespace HRMS_WEB.ApiControllers
             //delete previous assignements
             _db.RegexComponent.RemoveRange(await _db.RegexComponent.Where(r => r.TemplateID == Id).ToListAsync());
             await _db.SaveChangesAsync();
-            
+
             foreach (var regexItem in model.templateRegexList)
             {
                 var regexComponent = new RegexComponent()
                 {
                     Key = regexItem.key,
                     Value = regexItem.value,
+                    Area = regexItem.area,
+                    IsArea = regexItem.isArea,
                     TemplateID = template.ID
                 };
                 await _db.RegexComponent.AddAsync(regexComponent);

@@ -55,21 +55,36 @@
                             <div class="col-sm-12">
                                 <div class="row mb-2 text-bold">
                                     <div class="col-sm-1">ID</div>
-                                    <div class="col-sm-5">Key</div>
-                                    <div class="col-sm-6">Regular Expression</div>
+                                    <div class="col-sm-3">Key</div>
+                                    <div class="col-sm-4">Regular Expression</div>
+                                    <div class="col-sm-2">Area (left,upper,right,lower,PageNo)</div>
+                                    <div class="col-sm-1">IsArea</div>
                                 </div>
                                 <div class="row mb-2" v-for="regex in getRegexComponents">
                                     <div class="col-sm-1">
-                                        <input type="text"  class="form-control" :value="regex.id" disabled>
+                                        <input type="text" class="form-control" :value="regex.id" disabled>
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-3">
                                         <input type="text" v-model="regex.key" class="form-control" :id="regex.key + '-keyField'" placeholder="Enter your key">
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <input type="text" v-model="regex.value" class="form-control" :id="regex.value + '-valueField'" placeholder="Enter your Regex">
                                     </div>
+                                    <div class="col-sm-2">
+                                        <input type="text" v-model="regex.area" class="form-control" placeholder="Enter Area: X1, X2, Y1, Y2">
+                                    </div>
+                                    <div class="col-sm-1 mt-2">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                <input type="checkbox" class="custom-control-input" :id="regex.id + 'check'" v-model="regex.isArea">
+                                                <label class="custom-control-label" :for="regex.id + 'check'"></label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-sm-1">
-                                        <div class="btn btn-sm btn-danger my-auto" v-on:click="deleteRow(regex.id)"><i class="fa fa-trash"></i></div>
+                                        <div class="btn btn-sm btn-danger my-auto" v-on:click="deleteRow(regex.id)">
+                                            <i class="fa fa-trash"></i>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="text-right mt-3">
@@ -95,4 +110,11 @@
 @section Scripts
 {
     <script type="module" src="~/js/TemplateCreate.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+      bsCustomFileInput.init();
+    });
+    </script>
 }

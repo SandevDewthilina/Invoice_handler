@@ -75,7 +75,7 @@
                             <td>{{item.supplier_name}}</td>
                             <td>
                                 <div class="badge badge-success" v-if="item.status">Detected</div>
-                                <div class="badge badge-danger" v-else>Pending</div>
+                                <div class="badge badge-danger" v-else>Error</div>
                             </td>
                             <td class="text-center">
                                 <a :href="'/Invoice/ExtractDataFromPdf?Id=' + item.id" class="text-success text-sm fa fa-book-open mr-3"></a>

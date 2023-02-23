@@ -32,7 +32,9 @@ const app = createApp({
             regexList.push({
                 id: newId,
                 key: '',
-                value: ''
+                value: '',
+                area: '',
+                isArea: false
             })
             this.form.templateRegexList = regexList
         },
