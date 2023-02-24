@@ -28,15 +28,13 @@ namespace HRMS_WEB.Controllers
         private readonly IScraper _scraper;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ITableExtractor _tableExtractor;
-        private readonly IFieldExtractor _fieldExtractor;
 
         public InvoiceController(
             IStorageRepository storageRepository,
             HRMSDbContext db,
             IScraper scraper,
             IServiceScopeFactory serviceScopeFactory,
-            ITableExtractor tableExtractor,
-            IFieldExtractor fieldExtractor
+            ITableExtractor tableExtractor
         )
         {
             _storageRepository = storageRepository;
@@ -44,7 +42,6 @@ namespace HRMS_WEB.Controllers
             _scraper = scraper;
             _serviceScopeFactory = serviceScopeFactory;
             _tableExtractor = tableExtractor;
-            _fieldExtractor = fieldExtractor;
         }
 
         public IActionResult ExtractDataFromPdf(int Id)
@@ -75,7 +72,7 @@ namespace HRMS_WEB.Controllers
                 };
                 await _db.Upload.AddAsync(upload);
                 await _db.SaveChangesAsync();
-                var results = await ProcessUploadForId(upload.ID);
+                await ProcessUploadForId(upload.ID);
             }
 
 
@@ -124,35 +121,57 @@ namespace HRMS_WEB.Controllers
             return View();
         }
 
-        public async Task<IActionResult> ProcessUploadForId(int Id)
+        public async Task ProcessUploadForId(int Id)
         {
             // pdf content
             var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
             var supplierRegexList = await _db.RegexComponent.Where(rc => rc.Key.Equals("Supplier")).ToListAsync();
 
-            foreach (var regexComponent in supplierRegexList)
+            
+            var task = Task.Run(async () =>
             {
-                var results = await _scraper.Scrape(upload.FilePath, new List<RegexComponent>() {regexComponent}, upload);
-                if (results.Count > 0)
+                using var scope = _serviceScopeFactory.CreateScope();
+                // get the table components for the template
+                var db = scope.ServiceProvider.GetService<HRMSDbContext>();
+                foreach (var regexComponent in supplierRegexList)
                 {
-                    // fetch fields and save to db
-                    await _fieldExtractor.ExtractFields(upload, regexComponent);
-                    // fetch tables and save to db using a job
-                    _tableExtractor.ExtractTables(upload);
-                    break;
-                }
-            }
+                    var results = await _scraper.Scrape(upload.FilePath, new List<RegexComponent>() {regexComponent}, upload);
+                    if (results.Count > 0)
+                    {
+                        var fullRegexListForMatchingTemplate = await db.RegexComponent.Where(rc => rc.TemplateID == regexComponent.TemplateID).ToListAsync();
+                        // fetch fields and save to db
+                        var fieldDataList = await _scraper.Scrape(upload.FilePath, fullRegexListForMatchingTemplate, upload);
+                        // fetch tables and save to db using a job
+                        var tableDataList = await _tableExtractor.ExtractTables(upload, regexComponent.TemplateID);
+                        var uploadData = new UploadData();
+                        if (await db.UploadData.AnyAsync(ud => ud.DetectedTemplateID == regexComponent.TemplateID && ud.UploadID == upload.ID))
+                        {
+                            uploadData = await db.UploadData.FirstOrDefaultAsync(ud => ud.DetectedTemplateID == regexComponent.TemplateID && ud.UploadID == upload.ID);
+                            uploadData.FieldJson = JsonConvert.SerializeObject(fieldDataList);
+                            uploadData.TableJson = JsonConvert.SerializeObject(tableDataList);
+                            db.UploadData.Update(uploadData);
+                        }
+                        else
+                        {
+                            uploadData = new UploadData()
+                            {
+                                DetectedTemplateID = regexComponent.TemplateID,
+                                UploadID = upload.ID,
+                                FieldJson = JsonConvert.SerializeObject(fieldDataList),
+                                TableJson = JsonConvert.SerializeObject(tableDataList)
+                            };
+                            await db.UploadData.AddAsync(uploadData);
+                        }
 
-            return RedirectToAction("Index", "Home");
+                        await db.SaveChangesAsync();
+                        break;
+                    }
+                }
+            });
         }
 
         public async Task<IActionResult> ProcessUploadForIdWithoutSupplierDetection(int Id)
         {
-            var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
-
-            // fetch tableData from backend by a background thread
-            _tableExtractor.ExtractTables(upload);
-
             return RedirectToAction("Index", "Home");
         }
     }

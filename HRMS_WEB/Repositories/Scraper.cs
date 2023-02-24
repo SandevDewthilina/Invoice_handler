@@ -76,10 +76,14 @@ namespace HRMS_WEB.Repositories
             using (var client = new HttpClient())
             {
                 var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("http://localhost:6000/getTextOfArea", stringContent);
-                response.EnsureSuccessStatusCode();
-                var textList = await response.Content.ReadAsStringAsync();
+                var response = await client.PostAsync("http://localhost:8200/getTextOfArea", stringContent);
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    return fields;
+                }
+                
+                var textList = await response.Content.ReadAsStringAsync();
 
                 var responses = JsonConvert.DeserializeObject<List<TextResponse>>(textList);
                 if (responses != null)

@@ -22,5 +22,6 @@ namespace HRMS_WEB.DbContext
         public DbSet<SupplierTemplateAssignment> SupplierTemplateAssignment { get; set; }
         public DbSet<RegexComponent> RegexComponent { get; set; }
         public DbSet<UploadData> UploadData { get; set; }
+        public DbSet<TableComponent> TableComponent { get; set; }
     }
 }

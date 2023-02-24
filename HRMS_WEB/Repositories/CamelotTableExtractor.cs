@@ -1,4 +1,8 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
@@ -16,35 +20,47 @@ namespace HRMS_WEB.Repositories
         public CamelotTableExtractor(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
-        } 
-        
-        public void ExtractTables(Upload upload)
+        }
+
+        public async Task<List<object>> ExtractTables(Upload upload, int templateId)
         {
-            var task = Task.Run(async () =>
-            {
-                using (var scope = _serviceScopeFactory.CreateScope())
+                using var scope = _serviceScopeFactory.CreateScope();
+                // get the table components for the template
+                var db = scope.ServiceProvider.GetService<HRMSDbContext>();
+                var tableComponents = await db.TableComponent.Where(tc => tc.TemplateID == templateId).ToListAsync();
+                var jsonList = new List<object>();
+                foreach (var c in tableComponents)
                 {
                     var body = new
                     {
-                        url = "http://localhost:8100/" + upload.FilePath,
-                        filename = upload.FileName,
-                        upload_name = upload.ID
+                        file_url = "http://localhost:8100/" + upload.FilePath,
+                        file_name = upload.FileName,
+                        upload_name = upload.ID,
+                        table_areas = c.Area,
+                        edge_tol = c.EdgeTol,
+                        row_tol = c.RowTol,
+                        flavor = c.Flavor,
+                        flag_size = c.FlagSize,
+                        id = c.ID,
+                        page_no = c.PageNo,
+                        split_text = c.SplitText,
+                        columns = c.Columns
                     };
+
                     var json = JsonConvert.SerializeObject(body);
-                    using (var client = new HttpClient())
+
+                    using var client = new HttpClient();
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync("http://localhost:8200/detectTableOfArea", content);
+                    if (response.IsSuccessStatusCode)
                     {
-                        var content = new StringContent(json, Encoding.UTF8, "application/json");
-                        var response = await client.PostAsync("http://localhost:5000/ExtractData", content);
-                        response.EnsureSuccessStatusCode();
                         var tableJson = await response.Content.ReadAsStringAsync();
-                        var db = scope.ServiceProvider.GetService<HRMSDbContext>();
-                        var ud = await db.UploadData.FirstOrDefaultAsync(ud => ud.UploadID == upload.ID);
-                        ud.TableJson = tableJson;
-                        db.UploadData.Update(ud);
-                        await db.SaveChangesAsync();
+                        var _2dArray = JsonConvert.DeserializeObject(tableJson);
+                        jsonList.Add(_2dArray);
                     }
                 }
-            });
+
+                return jsonList;
         }
     }
 }

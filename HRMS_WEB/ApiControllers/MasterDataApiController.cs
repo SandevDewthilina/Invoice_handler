@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
+using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,19 @@ namespace HRMS_WEB.ApiControllers
                             value = r.Value,
                             area = r.Area,
                             isArea = r.IsArea
+                        }).ToListAsync(),
+                    tablesList = await _db.TableComponent.Where(c => c.TemplateID == template.ID)
+                        .Select(c => new TableComponentBody()
+                        {
+                            area = c.Area,
+                            edge_tol = c.EdgeTol,
+                            row_tol = c.RowTol,
+                            flavor = c.Flavor,
+                            font_sensitive = c.FlagSize,
+                            id = c.ID,
+                            page_no = c.PageNo,
+                            split_text = c.SplitText,
+                            columns = c.Columns
                         }).ToListAsync()
                 }
             };
@@ -88,6 +102,23 @@ namespace HRMS_WEB.ApiControllers
                 await _db.RegexComponent.AddAsync(regexComponent);
             }
 
+            foreach (TableComponentBody tb in model.tablesList)
+            {
+                var comp = new TableComponent()
+                {
+                    Area = tb.area,
+                    Flavor = tb.flavor,
+                    EdgeTol = tb.edge_tol,
+                    RowTol = tb.row_tol,
+                    FlagSize = tb.font_sensitive,
+                    PageNo = tb.page_no,
+                    SplitText = tb.split_text,
+                    TemplateID = template.ID,
+                    Columns = tb.columns
+                };
+                await _db.TableComponent.AddAsync(comp);
+            }
+
             await _db.SaveChangesAsync();
             return Json(new {success = true});
         }
@@ -102,6 +133,7 @@ namespace HRMS_WEB.ApiControllers
 
             //delete previous assignements
             _db.RegexComponent.RemoveRange(await _db.RegexComponent.Where(r => r.TemplateID == Id).ToListAsync());
+            _db.TableComponent.RemoveRange(await _db.TableComponent.Where(r => r.TemplateID == Id).ToListAsync());
             await _db.SaveChangesAsync();
 
             foreach (var regexItem in model.templateRegexList)
@@ -116,7 +148,22 @@ namespace HRMS_WEB.ApiControllers
                 };
                 await _db.RegexComponent.AddAsync(regexComponent);
             }
-
+            foreach (TableComponentBody tb in model.tablesList)
+            {
+                var comp = new TableComponent()
+                {
+                    Area = tb.area,
+                    Flavor = tb.flavor,
+                    EdgeTol = tb.edge_tol,
+                    RowTol = tb.row_tol,
+                    FlagSize = tb.font_sensitive,
+                    PageNo = tb.page_no,
+                    SplitText = tb.split_text,
+                    TemplateID = template.ID,
+                    Columns = tb.columns
+                };
+                await _db.TableComponent.AddAsync(comp);
+            }
             await _db.SaveChangesAsync();
             return Json(new {success = true});
         }

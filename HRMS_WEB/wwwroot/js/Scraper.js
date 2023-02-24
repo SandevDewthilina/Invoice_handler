@@ -7,10 +7,7 @@ const app = createApp({
             scrapeData: {
                 json: {
                     fields: [],
-                    table: {
-                        headings: [],
-                        content: []
-                    }
+                    tables: []
                 }
             }
         }
@@ -35,13 +32,17 @@ const app = createApp({
             console.log(fieldList)
             return fieldList
         },
-        getTableHeadings() {
-            console.log(this.scrapeData.json.table.headings)
-            return this.scrapeData.json.table.headings
+        getTableHeadings(id) {
+            console.log(id)
+            console.log(this.scrapeData.json.tables[id].headings)
+            return this.scrapeData.json.tables[id].headings
         },
-        getTableContent() {
-            console.log(this.scrapeData.json.table.content)
-            return this.scrapeData.json.table.content
+        getTableContent(id) {
+            console.log(this.scrapeData.json.tables[id].content)
+            return this.scrapeData.json.tables[id].content
+        },
+        getTableList() {
+            return this.scrapeData.json.tables
         }
     },
     methods: {
@@ -132,8 +133,20 @@ const app = createApp({
                 })
             }
             
-            // set table
-            this.scrapeData.json.table = JSON.parse(uploadData.tableJson)
+            if(uploadData.tableJson !== null) {
+                // set table
+                const _2d_array = JSON.parse(uploadData.tableJson)
+                console.log(_2d_array)
+                let tables = []
+                _2d_array.forEach((item, index) => {
+                    let table = {}
+                    table.id = index
+                    table.headings = _2d_array[index][0]
+                    table.content = _2d_array[index].slice(1, _2d_array[index].length)
+                    tables.push(table)
+                })
+                this.scrapeData.json.tables = tables
+            }
             
         }).catch(err => {
             alert('Data Prefetching failed')

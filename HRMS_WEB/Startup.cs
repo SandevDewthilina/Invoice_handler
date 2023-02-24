@@ -59,7 +59,6 @@ using AutoMapper;
             services.AddScoped<IScraper, Scraper>();
             services.AddScoped<IStorageRepository, StorageRepository>();
             services.AddScoped<ITableExtractor, CamelotTableExtractor>();
-            services.AddScoped<IFieldExtractor, OCRFieldExtractor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
