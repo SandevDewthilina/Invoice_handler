@@ -69,7 +69,7 @@ const app = createApp({
                 columns: obj.columns
             }
             console.log(req_body)
-            axios.post('http://localhost:8100/api/ScraperApi/DetectAreaOfPdfUrl', req_body, {responseType: 'blob'}).then(resp => {
+            axios.post('http://161.97.140.222:8200/checkDetectionArea', req_body, {responseType: 'blob'}).then(resp => {
                 const url = window.URL.createObjectURL(new Blob([resp.data]));
                 const link = document.createElement('a');
                 link.href = url;
