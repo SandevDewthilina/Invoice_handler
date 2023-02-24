@@ -69,7 +69,7 @@ const app = createApp({
                 columns: obj.columns
             }
             console.log(req_body)
-            axios.post('http://localhost:8200/checkDetectionArea', req_body, {responseType: 'blob'}).then(resp => {
+            axios.post('http://localhost:8100/api/ScraperApi/DetectAreaOfPdfUrl', req_body, {responseType: 'blob'}).then(resp => {
                 const url = window.URL.createObjectURL(new Blob([resp.data]));
                 const link = document.createElement('a');
                 link.href = url;
@@ -120,7 +120,7 @@ const app = createApp({
                 if (resp.data.success) {
                     window.location.href = '/Home/ViewTemplates'
                 } else {
-                    alert('request was not succesful')
+                    alert('request was not successful')
                 }
             }).catch(err => {
                 console.log(err.message)
