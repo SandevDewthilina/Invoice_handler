@@ -55,19 +55,19 @@ namespace HRMS_WEB.ApiControllers
             }
         }
 
-        public async Task<IActionResult> DetectAreaOfPdfUrl(DetectBody body)
+        public async Task<object> DetectAreaOfPdfUrl(DetectBody body)
         {
             var json = JsonConvert.SerializeObject(body);
             using var client = new HttpClient();
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("http://161.97.140.222:8200/checkDetectionArea", content);
+            var response = await client.PostAsync("http://localhost:8200/checkDetectionArea", content);
             if (response.IsSuccessStatusCode)
             {
                 return File(await response.Content.ReadAsStreamAsync(), "image/png");
             }
             else
             {
-                return Json(await response.Content.ReadAsStringAsync());
+                return await response.Content.ReadAsStringAsync();
             }
             
         }
