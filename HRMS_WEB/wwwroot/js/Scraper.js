@@ -84,14 +84,18 @@ const app = createApp({
                 let row = field.key + ',' + field.value + '\n'
                 content += row
             })
-            // add table to csv
-            const headings = this.scrapeData.json.table.headings
-            const rows = this.scrapeData.json.table.content
-            // write headings
-            content += headings.join() + '\n'
-            // write content
-            rows.forEach(row => {
-                content += row.join() + '\n'
+            
+            this.scrapeData.json.tables.forEach(table => {
+                // add table to csv
+                const headings = table.headings
+                const rows = table.content
+                // write headings
+                content += headings.join() + '\n'
+                // write content
+                rows.forEach(row => {
+                    content += row.join() + '\n'
+                })
+                content += '\n'
             })
 
             const encodedUri = encodeURI(content);
