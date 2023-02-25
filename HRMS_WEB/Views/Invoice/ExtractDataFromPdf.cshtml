@@ -141,9 +141,9 @@
                                             <div v-if="loading" class="col text-center">
                                                 Loading, Please wait!
                                             </div>
-                                            <div v-else style="max-width: 100%; overflow-x: scroll">
+                                            <div v-else class="px-1" style="max-width: 100%; overflow-x: scroll">
                                                 <div class="row" v-for="table in getTableList">
-                                                    <table class="table table-sm table-bordered table-striped">
+                                                    <table class="table table-sm table-bordered table-striped mx-1">
                                                         <thead>
                                                         <tr>
                                                             <th v-for="head in table.headings">{{head}}</th>

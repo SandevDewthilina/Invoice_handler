@@ -25,6 +25,7 @@ namespace HRMS_WEB.Models
         public string area { get; set; }
         public bool font_sensitive { get; set; }
         public string columns { get; set; }
+        public string headings { get; set; }
     }
     public class RegexItem
     {

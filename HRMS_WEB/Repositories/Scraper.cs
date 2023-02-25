@@ -127,7 +127,6 @@ namespace HRMS_WEB.Repositories
         public object GetCapturedGroup(string content, string pattern, string groupName)
         {
             MatchCollection matches = Regex.Matches(content, pattern);
-            var stop = false;
             foreach (Match match in matches)
             {
                 foreach (Group group in match.Groups)

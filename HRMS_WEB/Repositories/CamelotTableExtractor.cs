@@ -52,12 +52,20 @@ namespace HRMS_WEB.Repositories
                     using var client = new HttpClient();
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
                     var response = await client.PostAsync("http://localhost:8200/detectTableOfArea", content);
-                    if (response.IsSuccessStatusCode)
+                    
+                    if (!response.IsSuccessStatusCode) continue;
+                    
+                    var tableJson = await response.Content.ReadAsStringAsync();
+                    var _2dArray = JsonConvert.DeserializeObject<List<object>>(tableJson);
+                    
+                    // check and add heading list as first element if exist
+                    if (!string.IsNullOrEmpty(c.Headings))
                     {
-                        var tableJson = await response.Content.ReadAsStringAsync();
-                        var _2dArray = JsonConvert.DeserializeObject(tableJson);
-                        jsonList.Add(_2dArray);
+                        _2dArray?.Insert(0, c.Headings.Split("|"));
                     }
+                        
+                        
+                    jsonList.Add(_2dArray);
                 }
 
                 return jsonList;

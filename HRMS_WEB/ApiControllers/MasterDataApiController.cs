@@ -72,7 +72,8 @@ namespace HRMS_WEB.ApiControllers
                             id = c.ID,
                             page_no = c.PageNo,
                             split_text = c.SplitText,
-                            columns = c.Columns
+                            columns = c.Columns,
+                            headings = c.Headings
                         }).ToListAsync()
                 }
             };
@@ -114,7 +115,8 @@ namespace HRMS_WEB.ApiControllers
                     PageNo = tb.page_no,
                     SplitText = tb.split_text,
                     TemplateID = template.ID,
-                    Columns = tb.columns
+                    Columns = tb.columns,
+                    Headings = tb.headings
                 };
                 await _db.TableComponent.AddAsync(comp);
             }
@@ -160,7 +162,8 @@ namespace HRMS_WEB.ApiControllers
                     PageNo = tb.page_no,
                     SplitText = tb.split_text,
                     TemplateID = template.ID,
-                    Columns = tb.columns
+                    Columns = tb.columns,
+                    Headings = tb.headings
                 };
                 await _db.TableComponent.AddAsync(comp);
             }

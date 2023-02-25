@@ -101,7 +101,8 @@ const app = createApp({
                 area: null,
                 split_text: false,
                 font_sensitive: false,
-                columns: ''
+                columns: '',
+                headings: ''
             })
         },
         deleteRow(id) {
