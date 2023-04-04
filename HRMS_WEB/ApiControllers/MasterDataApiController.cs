@@ -29,7 +29,8 @@ namespace HRMS_WEB.ApiControllers
                 success = true, data = _db.Supplier.Select(s => new
                 {
                     id = s.ID,
-                    name = s.Name
+                    name = s.Name,
+                    code = s.Code
                 })
             });
         }

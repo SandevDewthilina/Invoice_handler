@@ -13,6 +13,7 @@ namespace HRMS_WEB.Viewmodels
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Code { get; set; }
         public List<Template> Templates { get; set; }
         public int[] AlreadySelectedIdList { get; set; }
         public int[] NewlySelectedIdList { get; set; }

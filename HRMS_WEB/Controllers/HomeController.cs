@@ -48,7 +48,8 @@ namespace HRMS_WEB.Controllers
         {
             var supplier = new Supplier()
             {
-                Name = model.Name
+                Name = model.Name,
+                Code = model.Code
             };
             await _db.Supplier.AddAsync(supplier);
             await _db.SaveChangesAsync();
@@ -76,6 +77,7 @@ namespace HRMS_WEB.Controllers
             {
                 Id = supplier.ID,
                 Name = supplier.Name,
+                Code = supplier.Code,
                 AlreadySelectedIdList = supplierTemplates,
                 Templates = await _db.Template.ToListAsync()
             });
@@ -86,6 +88,7 @@ namespace HRMS_WEB.Controllers
         {
             var supplier = await _db.Supplier.FirstOrDefaultAsync(s => s.ID == model.Id);
             supplier.Name = model.Name;
+            supplier.Code = model.Code;
             _db.Supplier.Update(supplier);
 
             // drop already assigned templates

@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-      <!-- Select2 -->
-      <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
-      <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 }
 
 
@@ -60,13 +60,17 @@
                             <input type="text" class="form-control" id="exampleInputPassword1" asp-for="Name" placeholder="Supplier Name">
                         </div>
                         <div class="form-group">
+                            <label asp-for="Name">Code</label>
+                            <input type="text" class="form-control" id="supplierCode" asp-for="Code" placeholder="Supplier Code">
+                        </div>
+                        <div class="form-group">
                             <label>Templates</label>
                             <select class="select2"
-                                    multiple="multiple" 
-                                    data-placeholder="Select Templates" 
+                                    multiple="multiple"
+                                    data-placeholder="Select Templates"
                                     asp-for="NewlySelectedIdList"
                                     style="width: 100%;"
-                                     asp-items="@(new MultiSelectList(Model.Templates, "ID", "Name", Model.AlreadySelectedIdList))">
+                                    asp-items="@(new MultiSelectList(Model.Templates, "ID", "Name", Model.AlreadySelectedIdList))">
                             </select>
                         </div>
                     </div>
@@ -88,7 +92,7 @@
 {
     <!-- Select2 -->
     <script src="~/plugins/select2/js/select2.full.min.js"></script>
-    <script defer >
+    <script defer>
      $('.select2').select2()
     </script>
 }
