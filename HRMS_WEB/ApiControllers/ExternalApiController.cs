@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
@@ -9,8 +10,10 @@ using HRMS_WEB.Models;
 using HRMS_WEB.Repositories;
 using HRMS_WEB.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 
 namespace HRMS_WEB.ApiControllers
@@ -39,12 +42,18 @@ namespace HRMS_WEB.ApiControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(ExternalUploadModel model)
         {
             try
             {
-                var files = Request.Form.Files;
-                var SupplierId = int.Parse(Request.Form["SupplierId"]);
+                var files = new List<IFormFile>();
+                foreach (var url in model.Urls)
+                {
+                    files.Add(await DownloadPdfAsync(url));
+                }
+
+                var supplier = await _db.Supplier.FirstOrDefaultAsync(s => s.Code.Equals(model.SupplierCode));
+                var SupplierId = supplier.ID;
 
                 var uploadDataList = new List<UploadData>();
 
@@ -118,5 +127,29 @@ namespace HRMS_WEB.ApiControllers
             await _db.SaveChangesAsync();
             return uploadData;
         }
+
+        public async Task<IFormFile> DownloadPdfAsync(string url)
+        {
+            using var client = new HttpClient();
+            using var response = await client.GetAsync(url);
+            var fileName = GetFileName(response);
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+            return new FormFile(memoryStream, 0, memoryStream.Length, fileName, fileName);
+        }
+        
+        
+        private string GetFileName(HttpResponseMessage response)
+        {
+            return Guid.NewGuid() + ".pdf";
+        }
+    }
+
+    public class ExternalUploadModel
+    {
+        public string[] Urls { get; set; }
+        public string SupplierCode { get; set; }
     }
 }
