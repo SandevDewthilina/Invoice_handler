@@ -48,10 +48,7 @@ namespace HRMS_WEB.ApiControllers
             try
             {
                 var files = new List<IFormFile>();
-                foreach (var url in model.Urls)
-                {
-                    files.Add(await DownloadPdfAsync(url));
-                }
+                files.Add(await DownloadPdfAsync(model.Urls));
 
                 var supplier = await _db.Supplier.FirstOrDefaultAsync(s => s.Code.Equals(model.SupplierCode));
                 var SupplierId = supplier.ID;
@@ -237,7 +234,7 @@ namespace HRMS_WEB.ApiControllers
 
     public class ExternalUploadModel
     {
-        public string[] Urls { get; set; }
+        public string Urls { get; set; }
         public string SupplierCode { get; set; }
     }
 }
