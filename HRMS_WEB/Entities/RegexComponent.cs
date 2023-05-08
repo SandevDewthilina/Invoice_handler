@@ -7,6 +7,7 @@
         public string Value { get; set; }
         public string Area { get; set; }
         public bool IsArea { get; set; }
+        public bool IsGoogleVision { get; set; }
         public int TemplateID { get; set; }
 
         public Template Template { get; set; }

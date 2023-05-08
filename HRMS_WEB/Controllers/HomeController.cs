@@ -54,18 +54,18 @@ namespace HRMS_WEB.Controllers
             await _db.Supplier.AddAsync(supplier);
             await _db.SaveChangesAsync();
             
-            // create new assignments
-            foreach (int tempId in model.NewlySelectedIdList)
-            {
-                var assignement = new SupplierTemplateAssignment()
-                {
-                    SupplierID = supplier.ID,
-                    TemplateID = tempId
-                };
-                await _db.SupplierTemplateAssignment.AddAsync(assignement);
-            }
+            // // create new assignments
+            // foreach (int tempId in model.NewlySelectedIdList)
+            // {
+            //     var assignement = new SupplierTemplateAssignment()
+            //     {
+            //         SupplierID = supplier.ID,
+            //         TemplateID = tempId
+            //     };
+            //     await _db.SupplierTemplateAssignment.AddAsync(assignement);
+            // }
 
-            await _db.SaveChangesAsync();
+            // await _db.SaveChangesAsync();
             return RedirectToAction("ViewSuppliers");
         }
 
@@ -91,23 +91,23 @@ namespace HRMS_WEB.Controllers
             supplier.Code = model.Code;
             _db.Supplier.Update(supplier);
 
-            // drop already assigned templates
-            var alreadyAssignedTemplates = _db.SupplierTemplateAssignment.Where(a => a.SupplierID == model.Id);
-            _db.SupplierTemplateAssignment.RemoveRange(alreadyAssignedTemplates);
-
-            if (model.NewlySelectedIdList != null )
-            {
-                // create new assignments
-                foreach (int tempId in model.NewlySelectedIdList)
-                {
-                    var assignement = new SupplierTemplateAssignment()
-                    {
-                        SupplierID = model.Id,
-                        TemplateID = tempId
-                    };
-                    await _db.SupplierTemplateAssignment.AddAsync(assignement);
-                }   
-            }
+            // // drop already assigned templates
+            // var alreadyAssignedTemplates = _db.SupplierTemplateAssignment.Where(a => a.SupplierID == model.Id);
+            // _db.SupplierTemplateAssignment.RemoveRange(alreadyAssignedTemplates);
+            //
+            // if (model.NewlySelectedIdList != null )
+            // {
+            //     // create new assignments
+            //     foreach (int tempId in model.NewlySelectedIdList)
+            //     {
+            //         var assignement = new SupplierTemplateAssignment()
+            //         {
+            //             SupplierID = model.Id,
+            //             TemplateID = tempId
+            //         };
+            //         await _db.SupplierTemplateAssignment.AddAsync(assignement);
+            //     }   
+            // }
 
             await _db.SaveChangesAsync();
             return RedirectToAction("ViewSuppliers");
@@ -134,9 +134,9 @@ namespace HRMS_WEB.Controllers
             return View();
         }
 
-        public IActionResult CreateTemplate()
+        public async Task<IActionResult> CreateTemplate()
         {
-            return View(new TemplateViewModel());
+            return View(new TemplateViewModel() {Suppliers = await _db.Supplier.ToListAsync()});
         }
 
         [HttpPost]
@@ -145,9 +145,9 @@ namespace HRMS_WEB.Controllers
             return RedirectToAction("ViewTemplates");
         }
 
-        public IActionResult EditTemplate(int Id)
+        public async Task<IActionResult> EditTemplate(int Id)
         {
-            return View();
+            return View(new TemplateViewModel() {Suppliers = await _db.Supplier.ToListAsync()});
         }
 
         public async Task<IActionResult> DeleteTemplate(int Id)

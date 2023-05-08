@@ -55,21 +55,20 @@
                     <table id="myuploadstable" class="table table-striped">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th>Thumbnail</th>
-                            <th>File name</th>
+                            <th>ID</th>
+                            <th>Document Name</th>
+                            <th>Document Template</th>
                             <th>Uploaded at</th>
                             <th>Supplier name</th>
-                            <th>Supplier Detection</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="item in myUploads">
                             <td>{{item.id + '.'}}</td>
-                            <td class="text-center" style="width: 30px">
-                                <img src="~/assets/179483.png" alt="" style="width: 30px; height: 30px; object-fit: contain">
-                            </td>
+                            <td>{{item.document_name}}</td>
+                            <td>{{item.template_name}}</td>
                             <td>{{item.file_name}}</td>
                             <td>{{item.upload_date}}</td>
                             <td>{{item.supplier_name}}</td>

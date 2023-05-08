@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Create Template";
 }
+@model HRMS_WEB.Viewmodels.TemplateViewModel
 
 @section Styles{
     <!-- Font Awesome -->
@@ -11,204 +12,228 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
 }
 
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">@ViewData["Title"]</h1>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="#">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active">Create Template</li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid" id="main">
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">Create Form</h3>
-                </div>
-                <!-- /.card-header -->
-                <!-- form start -->
-                <form role="form">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" v-model="form.template_name" class="form-control" id="exampleInputPassword1" placeholder="Template Name">
-                        </div>
-
-                        <div class="card card-primary card-outline">
-                            <div class="card-header">
-                                <div class="card-title">
-                                    Enter Table Components
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="col">
-                                    <div class="col-sm-4">
-                                        Test Link <br>
-                                        <input type="text" v-model="form.test_pdf_url" class="form-control" placeholder="http://localhost:8100/invoices/9095010588.pdf">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row" v-for="row in getTableList">
-                                        <div class="col-sm-12">
-                                            <div class="row">
-                                                <div class="col text-center pb-3">
-                                                    <h5>
-                                                        Table {{row.id}}
-                                                        <div class="text-sm ml-3 fa fa-trash text-danger" v-on:click="deleteTableRow(row.id)"></div>
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-1">
-                                                    <div>Page No</div>
-                                                    <input type="number" class="form-control" v-model="row.page_no" placeholder="Page No">
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <div>Flavor</div>
-                                                    <select class="form-control flavor_drop" v-model="row.flavor">
-                                                        <option value="stream">Stream</option>
-                                                        <option value="lattice">Lattice</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-1">
-                                                    <div>Edge Tol.</div>
-                                                    <input v-model="row.edge_tol" type="number" class="form-control" placeholder="Edge Tolerance">
-                                                </div>
-                                                <div class="col-sm-1 pt-auto">
-                                                    <div>Row Tol.</div>
-                                                    <input v-model="row.row_tol" type="number" class="form-control" placeholder="Row Tolerance">
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <div>lft-top(x,y)btm-rgt(x,y)</div>
-                                                    <input v-model="row.area" type="text" class="form-control" placeholder="Table Areas">
-                                                </div>
-                                                <div class="col-sm-1">
-                                                    <div>Split Text</div>
-                                                    <div class="form-group pt-2">
-                                                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                                            <input v-model="row.split_text" type="checkbox" class="custom-control-input" :id="'split_text_' + row.id">
-                                                            <label class="custom-control-label" :for="'split_text_' + row.id"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <div>Fontsize sensitive</div>
-                                                    <div class="form-group pt-2">
-                                                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                                            <input v-model="row.font_sensitive" type="checkbox" class="custom-control-input" :id="'font_sen_' + row.id">
-                                                            <label class="custom-control-label" :for="'font_sen_' + row.id"></label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-1 text-center">
-                                                    <br>
-                                                    <div class="btn btn-sm btn-outline-danger" v-on:click="detectRow(row.id)">Detect</div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-4">
-                                                    <div>Column Splits</div>
-                                                    <input class="form-control" placeholder="column splits x,y,z" type="text" v-model="row.columns">
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <div>Headings</div>
-                                                    <input class="form-control" placeholder="Heading1, Heading2, Heading 3" type="text" v-model="row.headings">
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-right mt-3">
-                                    <div class="btn btn-outline-primary btn-sm" v-on:click="addTableRow()"><i class="fa fa-plus mr-3"></i>Add Row</div>
-                                </div>
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">@ViewData["Title"]</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <a href="#">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Create Template</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid" id="main">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Create Form</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form role="form">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" v-model="form.template_name" class="form-control" id="exampleInputPassword1" placeholder="Template Name">
+                    </div>
+                    <div class="form-group d-flex flex-column" id="TagDropdown">
+                        <label>Select Supplier</label>
+                        <select id="suppliers" class="selectpicker"
+                                data-live-search="true"
+                                data-width="100%"
+                                data-actions-box="true"
+                                v-model="form.selectedSupplier"
+                                data-placeholder="Choose" style="width: 100%;">
+                            @foreach (var supplier in Model.Suppliers)
+                            {
+                                <option key="@supplier.ID" value="@supplier.ID" id="option_@supplier.ID">@supplier.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <div class="card-title">
+                                Enter Table Components
                             </div>
                         </div>
-
-                        <div class="card card-primary card-outline">
-                            <div class="card-header">
-                                <div class="card-title">
-                                    Enter Field Components
+                        <div class="card-body">
+                            <div class="col">
+                                <div class="col-sm-4">
+                                    Test Link <br>
+                                    <input type="text" v-model="form.test_pdf_url" class="form-control" placeholder="http://localhost:8100/invoices/9095010588.pdf">
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <div class="form-group">
+                            <div class="form-group">
+                                <div class="row" v-for="row in getTableList">
                                     <div class="col-sm-12">
-                                        <div class="row mb-2 text-bold">
-                                            <div class="col-sm-1">ID</div>
-                                            <div class="col-sm-3">Key</div>
-                                            <div class="col-sm-4">Regular Expression</div>
-                                            <div class="col-sm-2">Area <small>(l,t,r,b,PageNo)</small></div>
-                                            <div class="col-sm-1">IsArea</div>
+                                        <div class="row">
+                                            <div class="col text-center pb-3">
+                                                <h5>
+                                                    Table {{row.id}}
+                                                    <div class="text-sm ml-3 fa fa-trash text-danger" v-on:click="deleteTableRow(row.id)"></div>
+                                                </h5>
+                                            </div>
                                         </div>
-                                        <div class="row mb-2" v-for="regex in getRegexComponents">
+                                        <div class="row">
                                             <div class="col-sm-1">
-                                                <input type="text" class="form-control" :value="regex.id" disabled>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <input type="text" v-model="regex.key" class="form-control" :id="regex.key + '-keyField'" placeholder="Enter your key">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <input type="text" v-model="regex.value" class="form-control" :id="regex.value + '-valueField'" placeholder="Enter your Regex">
+                                                <div>Page No</div>
+                                                <input type="number" class="form-control" v-model="row.page_no" placeholder="Page No">
                                             </div>
                                             <div class="col-sm-2">
-                                                <input type="text" v-model="regex.area" class="form-control" placeholder="Enter Area: X1, X2, Y1, Y2">
+                                                <div>Flavor</div>
+                                                <select class="form-control flavor_drop" v-model="row.flavor">
+                                                    <option value="stream">Stream</option>
+                                                    <option value="lattice">Lattice</option>
+                                                </select>
                                             </div>
-                                            <div class="col-sm-1 mt-2">
-                                                <div class="form-group">
+                                            <div class="col-sm-1">
+                                                <div>Edge Tol.</div>
+                                                <input v-model="row.edge_tol" type="number" class="form-control" placeholder="Edge Tolerance">
+                                            </div>
+                                            <div class="col-sm-1 pt-auto">
+                                                <div>Row Tol.</div>
+                                                <input v-model="row.row_tol" type="number" class="form-control" placeholder="Row Tolerance">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div>lft-top(x,y)btm-rgt(x,y)</div>
+                                                <input v-model="row.area" type="text" class="form-control" placeholder="Table Areas">
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div>Split Text</div>
+                                                <div class="form-group pt-2">
                                                     <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                                        <input type="checkbox" class="custom-control-input" :id="regex.id + 'check'" v-model="regex.isArea">
-                                                        <label class="custom-control-label" :for="regex.id + 'check'"></label>
+                                                        <input v-model="row.split_text" type="checkbox" class="custom-control-input" :id="'split_text_' + row.id">
+                                                        <label class="custom-control-label" :for="'split_text_' + row.id"></label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-1">
-                                                <div class="btn btn-sm btn-danger my-auto" v-on:click="deleteRow(regex.id)">
-                                                    <i class="fa fa-trash"></i>
+                                            <div class="col-sm-2">
+                                                <div>Fontsize sensitive</div>
+                                                <div class="form-group pt-2">
+                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                        <input v-model="row.font_sensitive" type="checkbox" class="custom-control-input" :id="'font_sen_' + row.id">
+                                                        <label class="custom-control-label" :for="'font_sen_' + row.id"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1 text-center">
+                                                <br>
+                                                <div class="btn btn-sm btn-outline-danger" v-on:click="detectRow(row.id)">Detect</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div>Column Splits</div>
+                                                <input class="form-control" placeholder="column splits x,y,z" type="text" v-model="row.columns">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div>Headings</div>
+                                                <input class="form-control" placeholder="Heading1, Heading2, Heading 3" type="text" v-model="row.headings">
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right mt-3">
+                                <div class="btn btn-outline-primary btn-sm" v-on:click="addTableRow()"><i class="fa fa-plus mr-3"></i>Add Row</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <div class="card-title">
+                                Enter Field Components
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="row mb-2 text-bold">
+                                        <div class="col-sm-1">ID</div>
+                                        <div class="col-sm-3">Key</div>
+                                        <div class="col-sm-3">Regular Expression</div>
+                                        <div class="col-sm-2">Area <small>(l,t,r,b,PageNo)</small></div>
+                                        <div class="col-sm-1">IsArea</div>
+                                        <div class="col-sm-1">IsGoogleVision</div>
+                                    </div>
+                                    <div class="row mb-2" v-for="regex in getRegexComponents">
+                                        <div class="col-sm-1">
+                                            <input type="text" class="form-control" :value="regex.id" disabled>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input type="text" v-model="regex.key" class="form-control" :id="regex.key + '-keyField'" placeholder="Enter your key">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input type="text" v-model="regex.value" class="form-control" :id="regex.value + '-valueField'" placeholder="Enter your Regex">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input type="text" v-model="regex.area" class="form-control" placeholder="Enter Area: X1, X2, Y1, Y2">
+                                        </div>
+                                        <div class="col-sm-1 mt-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                    <input type="checkbox" class="custom-control-input" :id="regex.id + 'check'" v-model="regex.isArea">
+                                                    <label class="custom-control-label" :for="regex.id + 'check'"></label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="text-right mt-3">
-                                            <div class="btn btn-outline-primary btn-sm" v-on:click="addRow()"><i class="fa fa-plus mr-3"></i>Add Item</div>
+                                        <div class="col-sm-1 mt-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                    <input type="checkbox" class="custom-control-input" :id="regex.id + 'vision'" v-model="regex.isGoogleVision">
+                                                    <label class="custom-control-label" :for="regex.id + 'vision'"></label>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div class="col-sm-1">
+                                            <div class="btn btn-sm btn-danger my-auto" v-on:click="deleteRow(regex.id)">
+                                                <i class="fa fa-trash"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <div class="btn btn-outline-primary btn-sm" v-on:click="addRow()"><i class="fa fa-plus mr-3"></i>Add Item</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- /.card-body -->
+                </div>
+                <!-- /.card-body -->
 
-                    <div class="card-footer">
-                        <button type="submit" v-on:click="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div><!--/. container-fluid -->
-    </section>
-    <!-- /.content -->
+                <div class="card-footer">
+                    <button type="submit" v-on:click="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div><!--/. container-fluid -->
+</section>
+<!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
 <!-- PAGE SCRIPTS -->
 
 @section Scripts
 {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <script type="module" src="~/js/TemplateCreate.js"></script>
     <!-- bs-custom-file-input -->
     <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>

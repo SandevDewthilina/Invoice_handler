@@ -7,6 +7,7 @@
 @section Styles
 {
     <link href="https://releases.transloadit.com/uppy/v3.4.0/uppy.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
 }
 
 
@@ -40,6 +41,20 @@
                 </div>
                 <div class="card-body">
                     <form method="post" asp-action="Upload" asp-controller="Invoice" id="upload-form" enctype="multipart/form-data">
+                        <div class="form-group d-flex flex-column" id="TagDropdown">
+                            <label>Select Document Template</label>
+                            <select id="templates" class="selectpicker"
+                                    data-live-search="true"
+                                    data-width="100%"
+                                    asp-for="TemplateID"
+                                    data-actions-box="true"
+                                    data-placeholder="Choose" style="width: 100%;">
+                                @foreach (var template in Model.Templates)
+                                {
+                                    <option key="@template.ID" value="@template.ID" id="option_@template.ID">@template.Name</option>
+                                }
+                            </select>
+                        </div>
                         <div class="container py-5" id="uppy">
                             <div class="row">
                                 <input type="file" name="files[]" multiple hidden>
@@ -61,6 +76,7 @@
 
 @section Scripts
 {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <script src="https://releases.transloadit.com/uppy/v3.4.0/uppy.min.js"></script>
     <script defer src="~/js/image_upload.js"></script>
 }

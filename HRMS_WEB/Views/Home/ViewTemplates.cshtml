@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "View Templates";
+    ViewData["Title"] = "Document Templates";
 }
 
 @section Styles{
@@ -55,9 +55,9 @@
                     <table id="myuploadstable" class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th>Template Name</th>
-                            <th>Preview</th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Template</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -69,7 +69,7 @@
                             <td style="width: 50px">{{item.id + '.'}}</td>
                             <td>{{item.name}}</td>
                             <td style="width: 50px">
-                                <a href="#" >Preview</a>
+                                <a href="#" >View</a>
                             </td>
                             <td class="text-center" style="width: 100px">
                                 @* <a asp-action="ScrapePdf" asp-controller="Invoice" class="text-success text-sm fa fa-book-open mr-3"></a> *@

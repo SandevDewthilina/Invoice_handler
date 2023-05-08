@@ -18,46 +18,26 @@ namespace HRMS_WEB.ApiControllers
         {
             _db = db;
         }
-        
+
         // return file upload list
         [HttpGet]
         public async Task<IActionResult> GetFileUploads()
         {
-            
             // get uploads
-            var uploads = await _db.Upload.Include(u =>u.Supplier).ToListAsync();
-            foreach (Upload upload in uploads)
-            {
-                if (upload.SupplierID != null)
-                {
-                    continue;
-                }
-                // check for any detections
-                var detectedTemplateIds = await _db.UploadData.Where(ud => ud.UploadID == upload.ID).Select(ud => (int)ud.DetectedTemplateID).ToListAsync();
-                if (detectedTemplateIds.Count > 0)
-                {
-                    // get the first choice
-                    var suggestedTemplateId = detectedTemplateIds[0];
-                    var assignedSupplierIdForTemplate = await _db.SupplierTemplateAssignment.Include(a => a.Supplier).FirstOrDefaultAsync(a => a.TemplateID == suggestedTemplateId);
-                    if (assignedSupplierIdForTemplate != null)
-                    {
-                        upload.SupplierID = assignedSupplierIdForTemplate.SupplierID;
-                        upload.Supplier = assignedSupplierIdForTemplate.Supplier;
-                    }
-                }
-            }
-
-            var list = uploads.Select(u => new
-            {
-                id = u.ID,
-                file_name = u.FileName,
-                supplier_name = u.Supplier?.Name,
-                upload_date = u.UploadedDate.ToString("MM/dd/yyyy")
-            });
+            var uploads = await _db.Upload.Include(u => u.Supplier)
+                .Select(u => new {
+                    id = u.ID,
+                    file_name = u.FileName,
+                    supplier_name = u.Supplier.Name,
+                    upload_date = u.UploadedDate.ToString("MM/dd/yyyy"),
+                    document_name = u.DocumentName,
+                    template_name = _db.SupplierTemplateAssignment.FirstOrDefault(a => a.SupplierID == u.SupplierID).Template.Name
+                }).ToListAsync();
+            
             return Json(new
             {
                 success = true,
-                data = list
+                data = uploads
             });
         }
 

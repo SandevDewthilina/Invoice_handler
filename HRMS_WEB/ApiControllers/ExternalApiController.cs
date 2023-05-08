@@ -8,12 +8,10 @@ using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 using HRMS_WEB.Repositories;
-using HRMS_WEB.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -159,10 +157,8 @@ namespace HRMS_WEB.ApiControllers
                                 var value = tableContent[i][j];
                                 kvp.Add(key, value);
                             }
-
                             tableRows.Add(kvp);
                         }
-
                         map.Add($"Table{tableComponents.ElementAt(tableIndex).ID}", tableRows);
                         tableIndex++;
                     }

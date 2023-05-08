@@ -7,6 +7,7 @@ const app = createApp({
             form: {
                 test_pdf_url: '',
                 template_name: '',
+                selectedSupplier: '',
                 templateRegexList: [],
                 tablesList: []
             }
@@ -39,7 +40,8 @@ const app = createApp({
                 key: '',
                 value: '',
                 area: '',
-                isArea: false
+                isArea: false,
+                isGoogleVision: true
             })
             this.form.templateRegexList = regexList
         },
@@ -103,14 +105,13 @@ const app = createApp({
         },
         submit(e) {
             e.preventDefault()
-            let supplierElement = this.form.templateRegexList.find(i => i.key === 'Supplier')
-            if (supplierElement.value === '') {
-                alert("please enter regex for the Supplier Tag")
-                return
-            }
             const params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop),
             });
+            if(this.form.selectedSupplier === '' || this.form.selectedSupplier === null) {
+                alert('select supplier')
+                return
+            }
             console.log(this.form)
             axios.post('/api/MasterDataApi/EditTemplate?Id=' + params.id, this.form).then(resp => {
                 if(resp.data.success) {
@@ -132,6 +133,15 @@ const app = createApp({
         axios.get('/api/MasterDataApi/GetTemplateForId?Id=' + params.id).then(resp => {
             console.log(resp.data)
             this.form = resp.data.data.form
+            $("#suppliers").val(this.form.selectedSupplier).change();
+            // let suppliersDrop = document.getElementById("suppliers")
+            // for (var i = 0; i < suppliersDrop.options.length; i++) {
+            //     if (suppliersDrop.options[i].value === this.form.selectedSupplier) {
+            //         suppliersDrop.options[i].selected = true;
+            //         suppliersDrop.selectedIndex = i;
+            //         break;
+            //     }
+            // }
         }).catch(err => {
             console.log(err.message)
             alert(err.message)

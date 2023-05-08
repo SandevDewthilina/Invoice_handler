@@ -48,11 +48,13 @@ namespace HRMS_WEB.ApiControllers
         public async Task<IActionResult> GetTemplateForId(int Id)
         {
             var template = await _db.Template.FirstOrDefaultAsync(t => t.ID == Id);
+            var assignment = await _db.SupplierTemplateAssignment.FirstOrDefaultAsync(a => a.TemplateID == Id);
             var obj = new
             {
                 form = new
                 {
                     template_name = template.Name,
+                    selectedSupplier = assignment.SupplierID.ToString(),
                     templateRegexList = await _db.RegexComponent.Where(r => r.TemplateID == template.ID)
                         .Select(r => new
                         {
@@ -60,7 +62,8 @@ namespace HRMS_WEB.ApiControllers
                             Key = r.Key,
                             value = r.Value,
                             area = r.Area,
-                            isArea = r.IsArea
+                            isArea = r.IsArea,
+                            isGoogleVision = r.IsGoogleVision
                         }).ToListAsync(),
                     tablesList = await _db.TableComponent.Where(c => c.TemplateID == template.ID)
                         .Select(c => new TableComponentBody()
@@ -86,7 +89,7 @@ namespace HRMS_WEB.ApiControllers
         {
             var template = new Template()
             {
-                Name = model.template_name
+                Name = model.template_name,
             };
             await _db.Template.AddAsync(template);
             await _db.SaveChangesAsync();
@@ -99,7 +102,8 @@ namespace HRMS_WEB.ApiControllers
                     Value = regexItem.value,
                     Area = regexItem.area,
                     IsArea = regexItem.isArea,
-                    TemplateID = template.ID
+                    TemplateID = template.ID,
+                    IsGoogleVision = regexItem.isGoogleVision
                 };
                 await _db.RegexComponent.AddAsync(regexComponent);
             }
@@ -121,6 +125,12 @@ namespace HRMS_WEB.ApiControllers
                 };
                 await _db.TableComponent.AddAsync(comp);
             }
+
+            await _db.SupplierTemplateAssignment.AddAsync(new SupplierTemplateAssignment()
+            {
+                SupplierID = int.Parse(model.selectedSupplier),
+                TemplateID = template.ID
+            });
 
             await _db.SaveChangesAsync();
             return Json(new {success = true});
@@ -147,7 +157,8 @@ namespace HRMS_WEB.ApiControllers
                     Value = regexItem.value,
                     Area = regexItem.area,
                     IsArea = regexItem.isArea,
-                    TemplateID = template.ID
+                    TemplateID = template.ID,
+                    IsGoogleVision = regexItem.isGoogleVision
                 };
                 await _db.RegexComponent.AddAsync(regexComponent);
             }
@@ -168,6 +179,11 @@ namespace HRMS_WEB.ApiControllers
                 };
                 await _db.TableComponent.AddAsync(comp);
             }
+
+            var assignment = await _db.SupplierTemplateAssignment.FirstOrDefaultAsync(a => a.TemplateID == template.ID);
+            assignment.SupplierID = int.Parse(model.selectedSupplier);
+            _db.SupplierTemplateAssignment.Update(assignment);
+            
             await _db.SaveChangesAsync();
             return Json(new {success = true});
         }

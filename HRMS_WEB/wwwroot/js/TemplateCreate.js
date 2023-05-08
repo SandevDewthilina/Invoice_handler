@@ -7,15 +7,8 @@ const app = createApp({
             form: {
                 test_pdf_url: '',
                 template_name: '',
-                templateRegexList: [
-                    {
-                        id: 1,
-                        key: 'Supplier',
-                        value: '',
-                        area: '',
-                        isArea: false
-                    }
-                ],
+                selectedSupplier: '',
+                templateRegexList: [],
                 tablesList: []
             }
         }
@@ -48,7 +41,8 @@ const app = createApp({
                 key: '',
                 value: '',
                 area: '',
-                isArea: false
+                isArea: false,
+                isGoogleVision: true
             })
             this.form.templateRegexList = regexList
         },
@@ -111,9 +105,8 @@ const app = createApp({
         },
         submit(e) {
             e.preventDefault()
-            let supplierElement = this.form.templateRegexList.find(e => e.key === 'Supplier')
-            if (supplierElement.value === '') {
-                alert("please enter regex for the Supplier Tag")
+            if(this.form.selectedSupplier === '') {
+                alert("select Supplier")
                 return
             }
             console.log(this.form)

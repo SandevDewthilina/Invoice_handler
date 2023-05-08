@@ -10,6 +10,7 @@ namespace HRMS_WEB.Models
             tablesList = new List<TableComponentBody>();
         }
         public string template_name { get; set; }
+        public string selectedSupplier { get; set; }
         public List<RegexItem> templateRegexList { get; set; }
         public List<TableComponentBody> tablesList { get; set; }
     }
@@ -34,5 +35,6 @@ namespace HRMS_WEB.Models
         public string value { get; set; }
         public string area { get; set; }
         public bool isArea { get; set; }
+        public bool isGoogleVision { get; set; }
     }
 }
