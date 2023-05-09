@@ -170,7 +170,7 @@
                                         <div class="col-sm-1">ID</div>
                                         <div class="col-sm-3">Key</div>
                                         <div class="col-sm-3">Regular Expression</div>
-                                        <div class="col-sm-2">Area <small>(l,t,r,b,PageNo)</small></div>
+                                        <div class="col-sm-2">Area <small>(l,t,r,b)</small></div>
                                         <div class="col-sm-1">IsArea</div>
                                         <div class="col-sm-1">IsGoogleVision</div>
                                     </div>
@@ -190,7 +190,8 @@
                                         <div class="col-sm-1 mt-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                                    <input type="checkbox" class="custom-control-input" :id="regex.id + 'check'" v-model="regex.isArea">
+                                                    <input v-if="regex.isGoogleVision" disabled type="checkbox" class="custom-control-input" :id="regex.id + 'check'" v-model="regex.isArea">
+                                                    <input v-else type="checkbox" class="custom-control-input" :id="regex.id + 'check'" v-model="regex.isArea">
                                                     <label class="custom-control-label" :for="regex.id + 'check'"></label>
                                                 </div>
                                             </div>

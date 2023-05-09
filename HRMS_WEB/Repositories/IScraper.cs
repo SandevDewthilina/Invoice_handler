@@ -7,7 +7,7 @@ namespace HRMS_WEB.Repositories
 {
     public interface IScraper
     {
-        Task<List<object>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload);
+        Task<List<List<object>>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload);
         object GetCapturedGroup(string content, string pattern, string groupName);
     }
 }

@@ -20,25 +20,13 @@ const app = createApp({
             return JSON.stringify(this.scrapeData.json, undefined, 2)
         },
         getFieldList() {
-            let fieldList = []
-            this.scrapeData.json.fields.forEach(item => {
-                fieldList.push(
-                    {
-                        key: item.key,
-                        value: item.value
-                    }
-                )
-            })
-            console.log(fieldList)
-            return fieldList
+            return this.scrapeData.json.fields
         },
         getTableHeadings(id) {
-            console.log(id)
             console.log(this.scrapeData.json.tables[id].headings)
             return this.scrapeData.json.tables[id].headings
         },
         getTableContent(id) {
-            console.log(this.scrapeData.json.tables[id].content)
             return this.scrapeData.json.tables[id].content
         },
         getTableList() {
@@ -127,13 +115,11 @@ const app = createApp({
 
             if (uploadData.fieldJson !== null) {
                 // set field list
-                JSON.parse(uploadData.fieldJson).forEach(item => {
-                    this.scrapeData.json.fields.push(
-                        {
-                            key: item.Key,
-                            value: item.Value
-                        }
-                    )
+                JSON.parse(uploadData.fieldJson).forEach((item, index) => {
+                    this.scrapeData.json.fields.push({
+                        page: index,
+                        data: item
+                    })
                 })
             }
             

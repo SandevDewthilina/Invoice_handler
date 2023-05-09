@@ -25,11 +25,10 @@ namespace HRMS_WEB.Repositories
             _hostEnvironment = hostEnvironment;
         }
 
-        public async Task<List<object>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload)
+        public async Task<List<List<object>>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload)
         {
-            string content = "";
             string fullPath = Path.Combine(_hostEnvironment.WebRootPath, filepath);
-            var fields = new List<object>();
+            var fieldsPageCollection = new List<List<object>>();
 
             ITextExtractionStrategy starStrategy = new SimpleTextExtractionStrategy();
 
@@ -38,32 +37,34 @@ namespace HRMS_WEB.Repositories
             {
                 for (int i = 1; i <= reader.NumberOfPages; i++)
                 {
-                    content += PdfTextExtractor.GetTextFromPage(reader, i, starStrategy);
-                }
-            }
+                    var fields = new List<object>();
+                    string content = PdfTextExtractor.GetTextFromPage(reader, i, starStrategy);
+                    // run offline regex
+                    foreach (var regex in regexComponents)
+                    {
+                        if (regex.IsArea)
+                        {
+                            continue;
+                        }
 
+                        string pattern = regex.Value;
+                        string groupName = regex.Key;
 
-            // run offline regex
-            foreach (var regex in regexComponents)
-            {
-                if (regex.IsArea)
-                {
-                    continue;
-                }
-
-                string pattern = regex.Value;
-                string groupName = regex.Key;
-
-                // without using OCR
-                var obj = GetCapturedGroup(content, pattern, groupName);
-                if (obj != null)
-                {
-                    fields.Add(obj);
+                        // without using OCR
+                        var obj = GetCapturedGroup(content, pattern, groupName);
+                        if (obj != null)
+                        {
+                            fields.Add(obj);
+                        }
+                    }
+                    
+                    fieldsPageCollection.Add(fields);
+                    
                 }
             }
 
             // use OCR for online regex
-            var onlineRegex = regexComponents.Where(c => c.IsArea).ToList();
+            var onlineRegex = regexComponents.Where(c => c.IsArea || c.IsGoogleVision).ToList();
             // prepare the request
             var body = new
             {
@@ -80,48 +81,54 @@ namespace HRMS_WEB.Repositories
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return fields;
+                    return fieldsPageCollection;
                 }
                 
                 var textList = await response.Content.ReadAsStringAsync();
 
-                var responses = JsonConvert.DeserializeObject<List<TextResponse>>(textList);
+                var responses = JsonConvert.DeserializeObject<List<List<TextResponse>>>(textList);
                 if (responses != null)
                 {
-                    foreach (TextResponse keyTextPair in responses)
+                    int index = 0;
+                    foreach (List<TextResponse> pageData in responses)
                     {
-                        var key = keyTextPair.key;
-                        var text = keyTextPair.text;
-                        string pattern = "";
-
-                        var regexPatternForKey = onlineRegex.FirstOrDefault(c => c.Key.Equals(key));
-                        if (regexPatternForKey != null)
+                        foreach (TextResponse keyTextPair in pageData)
                         {
-                            pattern = regexPatternForKey.Value;
-                        }
+                            var key = keyTextPair.key;
+                            var text = keyTextPair.text;
+                            string pattern = "";
 
-                        if (pattern != null && !pattern.Equals(""))
-                        {
-                            var obj = GetCapturedGroup(text, pattern, key);
-                            if (obj != null)
+                            var regexPatternForKey = onlineRegex.FirstOrDefault(c => c.Key.Equals(key));
+                            if (regexPatternForKey != null)
                             {
-                                fields.Add(obj);
+                                pattern = regexPatternForKey.Value;
+                            }
+
+                            if (pattern != null && !pattern.Equals(""))
+                            {
+                                var obj = GetCapturedGroup(text, pattern, key);
+                                if (obj != null)
+                                {
+                                    fieldsPageCollection.ElementAt(index).Add(obj);
+                                }
+                            }
+                            else
+                            {
+                                fieldsPageCollection.ElementAt(index).Add(new
+                                {
+                                    Key = key,
+                                    Value = text
+                                });
                             }
                         }
-                        else
-                        {
-                            fields.Add(new
-                            {
-                                Key = key,
-                                Value = text
-                            });
-                        }
+
+                        index++;
                     }
                 }
             }
 
 
-            return fields;
+            return fieldsPageCollection;
         }
 
         public object GetCapturedGroup(string content, string pattern, string groupName)

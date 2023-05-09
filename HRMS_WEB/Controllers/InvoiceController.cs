@@ -129,7 +129,7 @@ namespace HRMS_WEB.Controllers
         {
             // pdf content
             var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
-            var assignment = await _db.SupplierTemplateAssignment.FirstOrDefaultAsync(a => a.SupplierID == upload.SupplierID);
+            var assignment = await _db.SupplierTemplateAssignment.Include(a => a.Template).FirstOrDefaultAsync(a => a.SupplierID == upload.SupplierID);
             var template = assignment.Template;
             
             var task = Task.Run(async () =>

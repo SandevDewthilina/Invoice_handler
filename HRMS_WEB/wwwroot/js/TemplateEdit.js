@@ -21,6 +21,11 @@ const app = createApp({
             return this.form.template_name
         },
         getRegexComponents() {
+            this.form.templateRegexList.forEach(regex => {
+                if (regex.isGoogleVision) {
+                    regex.isArea = true
+                }
+            })
             return this.form.templateRegexList
         },
         getTableList() {
@@ -108,10 +113,12 @@ const app = createApp({
             const params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop),
             });
-            if(this.form.selectedSupplier === '' || this.form.selectedSupplier === null) {
-                alert('select supplier')
-                return
-            }
+            this.form.templateRegexList.forEach(regex => {
+                if (regex.isArea && regex.area === '') {
+                    alert('areas cannot be empty for key: ' + regex.key)
+                    throw Error("areas can't be null")
+                }
+            })
             console.log(this.form)
             axios.post('/api/MasterDataApi/EditTemplate?Id=' + params.id, this.form).then(resp => {
                 if(resp.data.success) {
