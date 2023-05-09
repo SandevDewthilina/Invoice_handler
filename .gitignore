@@ -338,3 +338,4 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/HRMS_WEB/wwwroot/invoices/*.pdf
