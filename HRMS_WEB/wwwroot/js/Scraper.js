@@ -46,7 +46,7 @@ const app = createApp({
             axios.get('/api/UploadsApi/GetUploadForId?Id=' + uploadId).then(resp => {
                 console.log(resp.data.data)
                 const body = {
-                    url: 'http://localhost:8100/' + resp.data.data.filePath,
+                    url: 'http://localhost:9100/' + resp.data.data.filePath,
                     filename: resp.data.data.fileName,
                     upload_name: resp.data.data.id
                 }

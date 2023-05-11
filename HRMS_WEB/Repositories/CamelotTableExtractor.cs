@@ -33,7 +33,7 @@ namespace HRMS_WEB.Repositories
                 {
                     var body = new
                     {
-                        file_url = "http://localhost:8100/" + upload.FilePath,
+                        file_url = "http://localhost:9100/" + upload.FilePath,
                         file_name = upload.FileName,
                         upload_name = upload.ID,
                         table_areas = c.Area,
@@ -51,7 +51,7 @@ namespace HRMS_WEB.Repositories
 
                     using var client = new HttpClient();
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync("http://localhost:8200/detectTableOfArea", content);
+                    var response = await client.PostAsync("http://localhost:9200/detectTableOfArea", content);
                     
                     if (!response.IsSuccessStatusCode) continue;
                     

@@ -68,7 +68,7 @@ namespace HRMS_WEB.Repositories
             // prepare the request
             var body = new
             {
-                file_url = "http://localhost:8100/" + upload.FilePath,
+                file_url = "http://localhost:9100/" + upload.FilePath,
                 file_name = upload.FileName,
                 upload_name = upload.ID,
                 regexComponents = onlineRegex
@@ -77,7 +77,7 @@ namespace HRMS_WEB.Repositories
             using (var client = new HttpClient())
             {
                 var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("http://localhost:8200/getTextOfArea", stringContent);
+                var response = await client.PostAsync("http://localhost:9200/getTextOfArea", stringContent);
 
                 if (!response.IsSuccessStatusCode)
                 {

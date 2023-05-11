@@ -60,7 +60,7 @@ namespace HRMS_WEB.ApiControllers
             var json = JsonConvert.SerializeObject(body);
             using var client = new HttpClient();
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("http://localhost:8200/checkDetectionArea", content);
+            var response = await client.PostAsync("http://localhost:9200/checkDetectionArea", content);
             if (response.IsSuccessStatusCode)
             {
                 return File(await response.Content.ReadAsStreamAsync(), "image/png");
