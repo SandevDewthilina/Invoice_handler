@@ -56,6 +56,9 @@ namespace HRMS_WEB.Controllers
         }
 
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        // 200MB
         public async Task<IActionResult> Upload(ImageUploadViewModel viewModel)
         {
             var files = Request.Form.Files;
