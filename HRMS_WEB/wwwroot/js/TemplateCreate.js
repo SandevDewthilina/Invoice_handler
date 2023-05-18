@@ -8,6 +8,7 @@ const app = createApp({
                 test_pdf_url: '',
                 template_name: '',
                 selectedSupplier: '',
+                detectContours: false,
                 templateRegexList: [],
                 tablesList: []
             }

@@ -11,6 +11,7 @@ namespace HRMS_WEB.Models
         }
         public string template_name { get; set; }
         public string selectedSupplier { get; set; }
+        public bool detectContours { get; set; }
         public List<RegexItem> templateRegexList { get; set; }
         public List<TableComponentBody> tablesList { get; set; }
     }

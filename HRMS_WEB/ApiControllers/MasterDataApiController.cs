@@ -54,6 +54,7 @@ namespace HRMS_WEB.ApiControllers
                 form = new
                 {
                     template_name = template.Name,
+                    detectContours = template.DetectContours,
                     selectedSupplier = assignment.SupplierID.ToString(),
                     templateRegexList = await _db.RegexComponent.Where(r => r.TemplateID == template.ID)
                         .Select(r => new
@@ -90,6 +91,7 @@ namespace HRMS_WEB.ApiControllers
             var template = new Template()
             {
                 Name = model.template_name,
+                DetectContours = model.detectContours
             };
             await _db.Template.AddAsync(template);
             await _db.SaveChangesAsync();
@@ -141,6 +143,7 @@ namespace HRMS_WEB.ApiControllers
         {
             var template = await _db.Template.FirstOrDefaultAsync(t => t.ID == Id);
             template.Name = model.template_name;
+            template.DetectContours = model.detectContours;
             _db.Template.Update(template);
             await _db.SaveChangesAsync();
 

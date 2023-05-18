@@ -34,7 +34,7 @@ namespace HRMS_WEB.ApiControllers
             var template = await _db.Template.FirstOrDefaultAsync(t => t.ID == templateId);
             var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == uploadId);
             var regexComponents = await _db.RegexComponent.Where(c => c.TemplateID == templateId).ToListAsync();
-            var results = await _scraper.Scrape(upload.FilePath, regexComponents, upload);
+            var results = await _scraper.Scrape(upload.FilePath, regexComponents, upload, template);
             return Json(new
             {
                 success = true,

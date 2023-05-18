@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
+using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 using HRMS_WEB.Viewmodels;
 using Microsoft.AspNetCore.Authorization;

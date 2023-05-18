@@ -1,4 +1,6 @@
-﻿namespace HRMS_WEB.Models
+﻿using HRMS_WEB.Entities;
+
+namespace HRMS_WEB.Models
 {
     public class RegexComponent
     {

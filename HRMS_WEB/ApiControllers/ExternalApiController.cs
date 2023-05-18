@@ -183,7 +183,7 @@ namespace HRMS_WEB.ApiControllers
             var fullRegexListForMatchingTemplate = await _db.RegexComponent.Where(rc => rc.TemplateID == templateForSupplier.ID).ToListAsync();
 
             // fetch fields and save to db
-            var fieldDataList = await _scraper.Scrape(upload.FilePath, fullRegexListForMatchingTemplate, upload);
+            var fieldDataList = await _scraper.Scrape(upload.FilePath, fullRegexListForMatchingTemplate, upload, templateForSupplier);
             // fetch tables and save to db using a job
             var tableDataList = await _tableExtractor.ExtractTables(upload, templateForSupplier.ID);
 

@@ -25,7 +25,7 @@ namespace HRMS_WEB.Repositories
             _hostEnvironment = hostEnvironment;
         }
 
-        public async Task<List<List<object>>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload)
+        public async Task<List<List<object>>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload, Template template)
         {
             string fullPath = Path.Combine(_hostEnvironment.WebRootPath, filepath);
             var fieldsPageCollection = new List<List<object>>();
@@ -70,6 +70,7 @@ namespace HRMS_WEB.Repositories
             {
                 file_url = "http://localhost:9100/" + upload.FilePath,
                 file_name = upload.FileName,
+                detect_contour = template.DetectContours,
                 upload_name = upload.ID,
                 regexComponents = onlineRegex
             };

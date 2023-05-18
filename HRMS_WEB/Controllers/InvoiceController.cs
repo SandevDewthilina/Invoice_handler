@@ -142,7 +142,7 @@ namespace HRMS_WEB.Controllers
                 var db = scope.ServiceProvider.GetService<HRMSDbContext>();
                 var fullRegexListForMatchingTemplate = await db.RegexComponent.Where(rc => rc.TemplateID == template.ID).ToListAsync();
                 // fetch fields and save to db
-                var fieldDataList = await _scraper.Scrape(upload.FilePath, fullRegexListForMatchingTemplate, upload);
+                var fieldDataList = await _scraper.Scrape(upload.FilePath, fullRegexListForMatchingTemplate, upload, template);
                 // fetch tables and save to db using a job
                 var tableDataList = await _tableExtractor.ExtractTables(upload, template.ID);
                 

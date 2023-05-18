@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace HRMS_WEB.Models
+﻿namespace HRMS_WEB.Entities
 {
     public class Supplier
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 
 namespace HRMS_WEB.Viewmodels

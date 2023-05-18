@@ -1,6 +1,4 @@
-﻿using HRMS_WEB.Entities;
-
-namespace HRMS_WEB.Models
+﻿namespace HRMS_WEB.Entities
 {
     public class UploadData
     {

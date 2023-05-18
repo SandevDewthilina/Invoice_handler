@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
