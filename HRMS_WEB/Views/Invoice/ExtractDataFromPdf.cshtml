@@ -110,17 +110,12 @@
                                         <!-- /.card-header -->
                                         <div class="card-body">
                                             <div class="col-sm-12">
-                                                <div class="row" v-for="page_item in getFieldList">
-                                                    <div class="col">
-                                                        <h5>Page: {{page_item.page+1}}</h5>
-                                                        <div class="row mb-2" v-for="pair in page_item.data">
-                                                            <div class="col-sm-4">
-                                                                <input type="text" class="form-control" :value="pair.Key" disabled>
-                                                            </div>
-                                                            <div class="col-sm-8">
-                                                                <input type="text" class="form-control" :value="pair.Value">
-                                                            </div>
-                                                        </div>
+                                                <div class="row mb-2" v-for="pair in getFieldList">
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="form-control" :value="pair.Key" disabled>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" :value="pair.Value">
                                                     </div>
                                                 </div>
                                             </div>

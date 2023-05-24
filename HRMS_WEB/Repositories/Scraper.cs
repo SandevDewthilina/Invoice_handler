@@ -25,10 +25,10 @@ namespace HRMS_WEB.Repositories
             _hostEnvironment = hostEnvironment;
         }
 
-        public async Task<List<List<object>>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload, Template template)
+        public async Task<List<object>> Scrape(string filepath, List<RegexComponent> regexComponents, Upload upload, Template template)
         {
             string fullPath = Path.Combine(_hostEnvironment.WebRootPath, filepath);
-            var fieldsPageCollection = new List<List<object>>();
+            var fieldsPageCollection = new List<object>();
 
             ITextExtractionStrategy starStrategy = new SimpleTextExtractionStrategy();
 
@@ -37,7 +37,6 @@ namespace HRMS_WEB.Repositories
             {
                 for (int i = 1; i <= reader.NumberOfPages; i++)
                 {
-                    var fields = new List<object>();
                     string content = PdfTextExtractor.GetTextFromPage(reader, i, starStrategy);
                     // run offline regex
                     foreach (var regex in regexComponents)
@@ -54,12 +53,9 @@ namespace HRMS_WEB.Repositories
                         var obj = GetCapturedGroup(content, pattern, groupName);
                         if (obj != null)
                         {
-                            fields.Add(obj);
+                            fieldsPageCollection.Add(obj);
                         }
                     }
-                    
-                    fieldsPageCollection.Add(fields);
-                    
                 }
             }
 
@@ -84,46 +80,40 @@ namespace HRMS_WEB.Repositories
                 {
                     return fieldsPageCollection;
                 }
-                
+
                 var textList = await response.Content.ReadAsStringAsync();
 
-                var responses = JsonConvert.DeserializeObject<List<List<TextResponse>>>(textList);
+                var responses = JsonConvert.DeserializeObject<List<TextResponse>>(textList);
                 if (responses != null)
                 {
-                    int index = 0;
-                    foreach (List<TextResponse> pageData in responses)
+                    foreach (TextResponse keyTextPair in responses)
                     {
-                        foreach (TextResponse keyTextPair in pageData)
+                        var key = keyTextPair.key;
+                        var text = keyTextPair.text;
+                        string pattern = "";
+
+                        var regexPatternForKey = onlineRegex.FirstOrDefault(c => c.Key.Equals(key));
+                        if (regexPatternForKey != null)
                         {
-                            var key = keyTextPair.key;
-                            var text = keyTextPair.text;
-                            string pattern = "";
-
-                            var regexPatternForKey = onlineRegex.FirstOrDefault(c => c.Key.Equals(key));
-                            if (regexPatternForKey != null)
-                            {
-                                pattern = regexPatternForKey.Value;
-                            }
-
-                            if (pattern != null && !pattern.Equals(""))
-                            {
-                                var obj = GetCapturedGroup(text, pattern, key);
-                                if (obj != null)
-                                {
-                                    fieldsPageCollection.ElementAt(index).Add(obj);
-                                }
-                            }
-                            else
-                            {
-                                fieldsPageCollection.ElementAt(index).Add(new
-                                {
-                                    Key = key,
-                                    Value = text
-                                });
-                            }
+                            pattern = regexPatternForKey.Value;
                         }
 
-                        index++;
+                        if (pattern != null && !pattern.Equals(""))
+                        {
+                            var obj = GetCapturedGroup(text, pattern, key);
+                            if (obj != null)
+                            {
+                                fieldsPageCollection.Add(obj);
+                            }
+                        }
+                        else
+                        {
+                            fieldsPageCollection.Add(new
+                            {
+                                Key = key,
+                                Value = text
+                            });
+                        }
                     }
                 }
             }

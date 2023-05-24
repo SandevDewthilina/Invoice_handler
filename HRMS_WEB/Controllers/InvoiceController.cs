@@ -67,19 +67,24 @@ namespace HRMS_WEB.Controllers
 
             foreach (var file in files)
             {
-                await _storageRepository.SaveFile(file);
-                var upload = new Upload()
+                // split the pages of the pdf and save individually
+                await using var inputStream = file.OpenReadStream();
+                var filePaths = await _storageRepository.SaveFile(file);
+                foreach (string[] filePair in filePaths)
                 {
-                    FileName = file.FileName,
-                    FilePath = Path.Combine("Invoices", file.FileName),
-                    UploadedDate = DateTime.Now,
-                    SupplierID = supplierTemplateAssignment.SupplierID
-                };
-                await _db.Upload.AddAsync(upload);
-                await _db.SaveChangesAsync();
-                await _db.UploadData.AddAsync(new UploadData() {UploadID = upload.ID, DetectedTemplateID = viewModel.TemplateID});
-                await _db.SaveChangesAsync();
-                await ProcessUploadForId(upload.ID);
+                    var upload = new Upload()
+                    {
+                        FileName = filePair[1],
+                        FilePath = filePair[0],
+                        UploadedDate = DateTime.Now,
+                        SupplierID = supplierTemplateAssignment.SupplierID
+                    };
+                    await _db.Upload.AddAsync(upload);
+                    await _db.SaveChangesAsync();
+                    await _db.UploadData.AddAsync(new UploadData() {UploadID = upload.ID, DetectedTemplateID = viewModel.TemplateID});
+                    await _db.SaveChangesAsync();
+                    await ProcessUploadForId(upload.ID);
+                }
             }
 
 

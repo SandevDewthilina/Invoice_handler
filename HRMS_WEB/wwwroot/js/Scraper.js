@@ -116,10 +116,7 @@ const app = createApp({
             if (uploadData.fieldJson !== null) {
                 // set field list
                 JSON.parse(uploadData.fieldJson).forEach((item, index) => {
-                    this.scrapeData.json.fields.push({
-                        page: index,
-                        data: item
-                    })
+                    this.scrapeData.json.fields.push(item)
                 })
             }
             
