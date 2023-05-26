@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "My Uploads";
+    ViewData["Title"] = "Document Uploads";
 }
 
 @section Styles{
@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <style>
+        table.dataTable td, table.dataTable th {
+            font-size: 14px;
+        }
+    </style>
 }
 
 
@@ -35,11 +40,11 @@
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <a asp-action="Upload" asp-controller="Invoice" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a>
-                </div>
-            </div>
+            @* <div class="row"> *@
+            @*     <div class="col-sm-12 text-right"> *@
+            @*         <a asp-action="Upload" asp-controller="Invoice" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a> *@
+            @*     </div> *@
+            @* </div> *@
         </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
@@ -52,25 +57,23 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table id="myuploadstable" class="table table-striped">
+                    <table id="myuploadstable" class="table table-striped table-sm">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th>Thumbnail</th>
-                            <th>File name</th>
+                            <th>ID</th>
+                            <th>Document Name</th>
+                            <th>Document Template</th>
                             <th>Uploaded at</th>
                             <th>Supplier name</th>
-                            <th>Supplier Detection</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="item in myUploads">
                             <td>{{item.id + '.'}}</td>
-                            <td class="text-center" style="width: 30px">
-                                <img src="~/assets/179483.png" alt="" style="width: 30px; height: 30px; object-fit: contain">
-                            </td>
                             <td>{{item.file_name}}</td>
+                            <td>{{item.template_name}}</td>
                             <td>{{item.upload_date}}</td>
                             <td>{{item.supplier_name}}</td>
                             <td>
@@ -78,10 +81,7 @@
                                 <div class="badge badge-warning" v-else>Pending</div>
                             </td>
                             <td class="text-center">
-                                <a :href="'/Invoice/ExtractDataFromPdf?Id=' + item.id" class="text-success text-sm fa fa-book-open mr-3"></a>
-                                <a :href="'/Invoice/EditUpload?Id=' + item.id" class="text-sm fa fa-edit mr-3"></a>
-                                <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Invoice/DeleteUpload?Id=' + item.id"></a>
-                                <a class="text-s mr-3" :href="'/Invoice/ProcessUploadForIdWithoutSupplierDetection?Id=' + item.id">Process Tables</a>
+                                @* <a :href="'/Validation/Index?Id=' + item.id" class="text-primary text-sm mr-3" target="_blank">View</a> *@
                             </td>
                         </tr>
                         </tbody>
@@ -103,5 +103,5 @@
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script  type="module" src="~/js/MyUploads.js"></script>
+    <script type="module" src="~/js/MyUploads.js"></script>
 }

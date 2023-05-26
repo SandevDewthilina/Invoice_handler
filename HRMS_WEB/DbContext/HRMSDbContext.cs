@@ -1,10 +1,7 @@
-﻿using HRMS_WEB.Models;
+﻿using HRMS_WEB.Entities;
+using HRMS_WEB.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HRMS_WEB.Entities;
 
 namespace HRMS_WEB.DbContext
 {
@@ -14,14 +11,9 @@ namespace HRMS_WEB.DbContext
         {
             
         }
-
-        // Entities
-        public DbSet<Supplier> Supplier{ get; set; }
-        public DbSet<Template> Template { get; set; }
-        public DbSet<Upload> Upload { get; set; }
-        public DbSet<SupplierTemplateAssignment> SupplierTemplateAssignment { get; set; }
-        public DbSet<RegexComponent> RegexComponent { get; set; }
-        public DbSet<UploadData> UploadData { get; set; }
-        public DbSet<TableComponent> TableComponent { get; set; }
+        
+        public DbSet<ExternalData> ExternalData { get; set; }
+        public DbSet<ExternalDataPair> ExternalDataPair { get; set; }
+        public DbSet<ComparisonLog> ComparisonLog { get; set; }
     }
 }

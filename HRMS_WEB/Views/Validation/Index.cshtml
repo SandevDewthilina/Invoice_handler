@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "Data Validation";
+}
+
+@using KeyValuePair = HRMS_WEB.Controllers.KeyValuePair
+@model HRMS_WEB.Controllers.ComparisonData
+
+@section Styles{
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v3.4.0/uppy.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
+}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">@ViewData["Title"]</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a href="#">Validation</a>
+                        </li>
+                        <li class="breadcrumb-item active">Data Validation</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+            @* <div class="row"> *@
+            @*     <div class="col-sm-12 text-right"> *@
+            @*         <a asp-action="Upload" asp-controller="Invoice" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a> *@
+            @*     </div> *@
+            @* </div> *@
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid" id="main">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title text-primary">Execute Comparison</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Chassis Number : @ViewBag.chassisNumber</h5>
+                    <hr>
+                    <form asp-action="Index" asp-controller="Validation">
+                        <input hidden="hidden" asp-for="@Model.FirstSourceBatchId"/>
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="form-group d-flex flex-column" id="TagDropdown">
+                                    <label>Select Comparison Source</label>
+                                    <select id="sources" class="selectpicker"
+                                            data-live-search="true"
+                                            data-width="100%"
+                                            asp-for="@Model.SecondSourceBatchId"
+                                            data-actions-box="true"
+                                            data-placeholder="Choose" style="width: 100%;">
+                                        @foreach (var source in ViewBag.comparisonSources)
+                                        {
+                                            <option key="@source[1]" value="@source[1]" id="option_@source[1]">@source[0]</option>
+                                        }
+                                    </select>
+                                    </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label></label>
+                                <button type="submit" class="btn btn-block btn-outline-danger">Compare</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="my-3 row">
+                        <div class="col-sm-4 text-center"><h4>Scanned Fields</h4></div>
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4 text-center"><h4>Source Data</h4></div>
+                    </div>
+                    
+                    @foreach (List<KeyValuePair> pair in ViewBag.ComparisonPair)
+                    {
+                        <div class="row mt-1">
+                            <div class="col-sm-4">
+                                <div>@pair.ElementAt(0).Key</div>
+                                <input type="text" class="form-control" value="@pair.ElementAt(0).Value">
+                            </div>
+                            <div class="col-sm-4" style="padding-top: 30px">
+                                <div class="row">
+                                    <div class="col-sm-5"><hr></div>
+                                    <div class="col-sm-2 text-center">
+                                        @if (pair.ElementAt(0).Value.Equals(pair.ElementAt(1).Value))
+                                        {
+                                            <i class="fa fa-check-circle text-success" style="font-size: 25px"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-exclamation-circle text-danger" style="font-size: 25px"></i>
+                                        }
+                                    </div>
+                                    <div class="col-sm-5"><hr></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div>@pair.ElementAt(1).Key</div>
+                                <input type="text" class="form-control" value="@pair.ElementAt(1).Value">
+                            </div>
+                        </div>
+                   
+                    }
+
+                </div>
+            </div>
+        </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<!-- PAGE SCRIPTS -->
+
+@section Scripts
+{
+    <!-- DataTables -->
+    @* <script src="~/plugins/datatables/jquery.dataTables.min.js"></script> *@
+    @* <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script> *@
+    @* <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script> *@
+    @* <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script> *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    @* <script type="module" src="~/js/Validator.js"></script> *@
+}

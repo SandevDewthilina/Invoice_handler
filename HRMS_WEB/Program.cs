@@ -45,7 +45,7 @@ namespace HRMS_WEB
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
-                    .UseUrls("http://0.0.0.0:8100");
+                    .UseUrls("http://0.0.0.0:9150");
                 });
     }
 }

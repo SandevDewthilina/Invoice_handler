@@ -18,7 +18,7 @@ const app = createApp({
         }
     },
     created() {
-        axios.get('/api/UploadsApi/GetFileUploads').then(resp => {
+        axios.get('http://localhost:9100/api/GatewayApi/GetUploadList').then(resp => {
             let datalist = resp.data.data
             datalist.forEach(item => {
                 item.status = item.supplier_name !== null
@@ -29,6 +29,8 @@ const app = createApp({
                 $("#myuploadstable").DataTable({
                     "responsive": true,
                     "autoWidth": false,
+                    "pageLength": 50,
+                    "order": [ 0, 'desc' ]
                 });
             });
         }).catch(err => {

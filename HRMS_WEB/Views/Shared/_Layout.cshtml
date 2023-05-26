@@ -88,68 +88,43 @@
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                     <li class="nav-item has-treeview menu-open">
-                        <a asp-controller="Home" asp-action="Index" class="nav-link active">
+                        <a asp-controller="Home" asp-action="ExternalDataBatches" class="nav-link active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
-                                My Uploads
+                                External Data Batches
                             </p>
                         </a>
                     </li>
                     <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-cogs"></i>
-                        <p>
-                            Administration
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-
-                    <ul class="nav nav-treeview">
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a asp-action="Register" asp-controller="Account" class="nav-link">
-                                    <i class="far fa-registered nav-icon"></i>
-                                    <p>Registration</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-action="ListRoles" asp-controller="Administration" class="nav-link">
-                                    <i class="fas fa-users nav-icon"></i>
-                                    <p>User roles</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-action="Kill" asp-controller="Administration" class="nav-link">
-                                    <i class="fa fa-stop-circle nav-icon"></i>
-                                    <p>Kill System</p>
-                                </a>
-                            </li>
-                        }
-
-                    </ul>
-                    <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
-                            <i class="nav-icon fa fa-database"></i>
+                            <i class="nav-icon fa fa-cogs"></i>
                             <p>
-                                Master Data
-                                <i class="fa fa-angle-left right"></i>
+                                Administration
+                                <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
-
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a asp-action="ViewSuppliers" asp-controller="Home" class="nav-link">
-                                    <i class="fa fa-user nav-icon"></i>
-                                    <p>Suppliers</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-action="ViewTemplates" asp-controller="Home" class="nav-link">
-                                    <i class="fa fa-book nav-icon"></i>
-                                    <p>Templates</p>
-                                </a>
-                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a asp-action="Register" asp-controller="Account" class="nav-link">
+                                        <i class="far fa-registered nav-icon"></i>
+                                        <p>Registration</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-action="ListRoles" asp-controller="Administration" class="nav-link">
+                                        <i class="fas fa-users nav-icon"></i>
+                                        <p>User roles</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-action="Kill" asp-controller="Administration" class="nav-link">
+                                        <i class="fa fa-stop-circle nav-icon"></i>
+                                        <p>Kill System</p>
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </li>
                     <li class="nav-item has-treeview">
@@ -160,12 +135,19 @@
                                 <i class="fa fa-angle-left right"></i>
                             </p>
                         </a>
-
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a asp-action="ProcessUploads" asp-controller="Invoice" class="nav-link">
+                                <a asp-action="ComparisonLogs" asp-controller="Home" class="nav-link">
                                     <i class="fa fa-book nav-icon"></i>
-                                    <p>Process Uploads</p>
+                                    <p>Comparison Logs</p>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Home" class="nav-link">
+                                    <i class="fa fa-book nav-icon"></i>
+                                    <p>File Uploads</p>
                                 </a>
                             </li>
                         </ul>

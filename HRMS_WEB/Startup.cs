@@ -6,13 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using HRMS_WEB.Models;
 using HRMS_WEB.DbContext;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
 using AutoMapper;
     using HRMS_WEB.Repositories;
 
@@ -56,9 +53,8 @@ using AutoMapper;
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Repository dependency injection
-            services.AddScoped<IScraper, Scraper>();
-            services.AddScoped<IStorageRepository, StorageRepository>();
-            services.AddScoped<ITableExtractor, CamelotTableExtractor>();
+            services.AddScoped<IApiGateway, ApiGateway>();
+            services.AddScoped<IComparisonRepository, ComparisonRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,7 +91,7 @@ using AutoMapper;
             {
                 endpoints.MapControllerRoute(
                     name: "default", 
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=ExternalDataBatches}/{id?}");
             });
         }
     }

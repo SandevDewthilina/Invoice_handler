@@ -1,6 +1,7 @@
 ﻿@{
-    ViewData["Title"] = "View Suppliers";
+    ViewData["Title"] = "Data Batches";
 }
+@model List<HRMS_WEB.Entities.ExternalData>
 
 @section Styles{
     <!-- Font Awesome -->
@@ -14,6 +15,11 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <style>
+        table.dataTable td, table.dataTable th {
+            font-size: 14px;
+        }
+    </style>
 }
 
 
@@ -31,47 +37,46 @@
                         <li class="breadcrumb-item">
                             <a href="#">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Suppliers</li>
+                        <li class="breadcrumb-item active">External Data Batches</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <a asp-action="CreateSupplier" asp-controller="Home" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp; &nbsp; Create New</a>
-                </div>
-            </div>
+            @* <div class="row"> *@
+            @*     <div class="col-sm-12 text-right"> *@
+            @*         <a asp-action="Upload" asp-controller="Invoice" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a> *@
+            @*     </div> *@
+            @* </div> *@
         </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid" id="main">
-            <div class="card">
+            <div class="card card-primary card-outline">
                 <div class="card-header">
-                    <h3 class="card-title text-primary">All Suppliers</h3>
+                    <h3 class="card-title text-primary">All Data</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table id="myuploadstable" class="table table-bordered table-striped">
+                    <table id="myuploadstable" class="table table-striped table-sm">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th>Code</th>
-                            <th>Name</th>
+                            <th>Chassis Number</th>
+                            <th>Source Type</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in suppliers">
-                            <td style="width: 50px">{{item.id + '.'}}</td>
-                            <td>{{item.code}}</td>
-                            <td>{{item.name}}</td>
-                            <td class="text-center" style="width: 100px">
-                                @* <a asp-action="ScrapePdf" asp-controller="Invoice" class="text-success text-sm fa fa-book-open mr-3"></a> *@
-                                <a  :href="'/Home/EditSupplier?id='+ item.id" class="text-sm fa fa-edit mr-3"></a>
-                                <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Home/DeleteSupplier?id=' + item.id"></a>
-                            </td>
-                        </tr>
+                            @foreach (var ed in Model)
+                            {
+                                <tr>
+                                    <td>@ed.ChassisNumber</td>
+                                    <td>@ed.Type</td>
+                                    <td class="text-center">
+                                        <a asp-controller="Validation" asp-action="Index" asp-route-firstSourceBatchId="@ed.ID" class="text-primary text-sm mr-3" target="_blank">Compare</a>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -86,10 +91,19 @@
 
 @section Scripts
 {
-    <script defer type="module" src="~/js/Suppliers.js"></script>
     <!-- DataTables -->
     <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script>
+    $(document).ready(function () {
+                    $("#myuploadstable").DataTable({
+                        "responsive": true,
+                        "autoWidth": false,
+                        "pageLength": 50,
+                        "order": [0, 'asc']
+                    });
+                });
+    </script>
 }
