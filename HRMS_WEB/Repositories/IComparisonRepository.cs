@@ -20,13 +20,11 @@ namespace HRMS_WEB.Repositories
     public class ComparisonRepository : IComparisonRepository
     {
         private readonly HRMSDbContext _db;
-        private readonly IApiGateway _apiGateway;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ComparisonRepository(HRMSDbContext db, IApiGateway apiGateway, IServiceScopeFactory serviceScopeFactory)
+        public ComparisonRepository(HRMSDbContext db, IServiceScopeFactory serviceScopeFactory)
         {
             _db = db;
-            _apiGateway = apiGateway;
             _serviceScopeFactory = serviceScopeFactory;
         }
 
