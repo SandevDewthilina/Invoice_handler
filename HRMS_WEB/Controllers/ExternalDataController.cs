@@ -9,12 +9,14 @@ using System.Linq;
 using CsvHelper;
 using HRMS_WEB.Entities;
 using HRMS_WEB.Viewmodels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace HRMS_WEB.Controllers
 {
+    [Authorize]
     public class ExternalDataController : Controller
     {
         private readonly HRMSDbContext _db;
