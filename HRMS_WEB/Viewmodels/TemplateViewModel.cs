@@ -14,6 +14,7 @@ namespace HRMS_WEB.Viewmodels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
+        public string TemplateType { get; set; }
         public string SupplierID { get; set; }
         public List<Supplier> Suppliers { get; set; }
     }

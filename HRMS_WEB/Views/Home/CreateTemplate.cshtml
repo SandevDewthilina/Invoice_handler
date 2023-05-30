@@ -53,6 +53,21 @@
                         <input type="text" v-model="form.template_name" class="form-control" id="exampleInputPassword1" placeholder="Template Name">
                     </div>
                     <div class="form-group d-flex flex-column" id="TagDropdown">
+                        <label>Select Source Type</label>
+                        <select id="tempalatetype" class="selectpicker"
+                                data-live-search="true"
+                                data-width="100%"
+                                data-actions-box="true"
+                                v-model="form.template_type"
+                                data-placeholder="Choose" style="width: 100%;">
+                        
+                                <option key="ERP" value="ERP" id="option_ERP">ERP</option>
+                                <option key="MASHO" value="MASHO" id="option_MASHO">MASHO</option>
+                                <option key="AUCTION_SHEET" value="AUCTION_SHEET" id="option_AUCTION_SHEET">AUCTION SHEET</option>
+                                <option key="INSPECTION_SHEET" value="INSPECTION_SHEET" id="option_INSPECTION_SHEET">INSPECTION SHEET</option>
+                        </select>
+                    </div>
+                    <div class="form-group d-flex flex-column" id="TagDropdown">
                         <label>Select Supplier</label>
                         <select id="suppliers" class="selectpicker"
                                 data-live-search="true"

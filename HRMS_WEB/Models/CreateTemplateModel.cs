@@ -10,6 +10,7 @@ namespace HRMS_WEB.Models
             tablesList = new List<TableComponentBody>();
         }
         public string template_name { get; set; }
+        public string template_type { get; set; }
         public string selectedSupplier { get; set; }
         public bool detectContours { get; set; }
         public List<RegexItem> templateRegexList { get; set; }

@@ -7,6 +7,7 @@ const app = createApp({
             form: {
                 test_pdf_url: '',
                 template_name: '',
+                template_type: '',
                 detectContours: false,
                 selectedSupplier: '',
                 templateRegexList: [],

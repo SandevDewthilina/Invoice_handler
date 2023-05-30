@@ -29,6 +29,8 @@ const app = createApp({
                 $("#myuploadstable").DataTable({
                     "responsive": true,
                     "autoWidth": false,
+                    "pageLength": 50,
+                    "order": [ 0, 'desc' ]
                 });
             });
         }).catch(err => {
