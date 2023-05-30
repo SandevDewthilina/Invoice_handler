@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using CsvHelper;
 using HRMS_WEB.Entities;
+using HRMS_WEB.Repositories;
 using HRMS_WEB.Viewmodels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,10 +21,12 @@ namespace HRMS_WEB.Controllers
     public class ExternalDataController : Controller
     {
         private readonly HRMSDbContext _db;
+        private readonly IComparisonRepository _comparisonRepository;
 
-        public ExternalDataController(HRMSDbContext db)
+        public ExternalDataController(HRMSDbContext db, IComparisonRepository comparisonRepository)
         {
             _db = db;
+            _comparisonRepository = comparisonRepository;
         }
 
         public async Task<IActionResult> ExternalDataBatches()
@@ -103,6 +106,7 @@ namespace HRMS_WEB.Controllers
                             }
                             
                             await _db.SaveChangesAsync();
+                            await _comparisonRepository.CompareExternalDataByPlan(ed);
                         }
                         
                     }

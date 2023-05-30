@@ -22,13 +22,13 @@ namespace HRMS_WEB.Repositories
     public class ApiGateway : IApiGateway
     {
         private readonly HRMSDbContext _db;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IComparisonRepository _comparisonRepository;
         private string BASE_URL = "http://localhost:9100";
 
-        public ApiGateway(HRMSDbContext db, IServiceScopeFactory serviceScopeFactory)
+        public ApiGateway(HRMSDbContext db, IComparisonRepository comparisonRepository)
         {
             _db = db;
-            _serviceScopeFactory = serviceScopeFactory;
+            _comparisonRepository = comparisonRepository;
         }
         private async Task<ApiResponse<T>> HttpGet<T>(string url)
         {
@@ -100,41 +100,8 @@ namespace HRMS_WEB.Repositories
 
                 await _db.ExternalDataPair.AddRangeAsync(externalDataPairs);
                 await _db.SaveChangesAsync();
-                
-                // start comparison job
-                await Task.Run(async () =>
-                {
-                    using var scope = _serviceScopeFactory.CreateScope();
-                    var db = scope.ServiceProvider.GetService<HRMSDbContext>();
-                    var comparisonRepository = scope.ServiceProvider.GetRequiredService<IComparisonRepository>();
-                    
-                    // get comparison types
-                    var firstSourceType = uploadData.docType;
-                    var secondSources = await db.DocumentComparisonPlan
-                        .Where(p => p.FirstSource.Equals(firstSourceType))
-                        .Select(p => p.SecondSource)
-                        .ToListAsync();
 
-                    foreach (var secondSource in secondSources)
-                    {
-                        var secondExternalSource = await db.ExternalData
-                            .FirstOrDefaultAsync(e => e.ChassisNumber.Equals(chassisNumber) && e.Type.Equals(secondSource));
-
-                        if (secondExternalSource == null)
-                        {
-                            continue;
-                        }
-                        
-                        var model = new ComparisonData()
-                        {
-                            FirstSourceBatchId = externalData.ID,
-                            SecondSourceBatchId = secondExternalSource.ID
-                        };
-                        
-                        var newComparisonLog = await comparisonRepository.RetryCompare(model);
-                    }
-
-                });
+                await _comparisonRepository.CompareExternalDataByPlan(externalData);
 
             }
         }

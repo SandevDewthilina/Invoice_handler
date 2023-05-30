@@ -5,6 +5,7 @@ using HRMS_WEB.Controllers;
 using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using KeyValuePair = HRMS_WEB.Controllers.KeyValuePair;
 
@@ -13,17 +14,20 @@ namespace HRMS_WEB.Repositories
     public interface IComparisonRepository
     {
         public Task<ComparisonLog> RetryCompare(ComparisonData comparisonData);
+        public Task CompareExternalDataByPlan(ExternalData externalData);
     }
 
     public class ComparisonRepository : IComparisonRepository
     {
         private readonly HRMSDbContext _db;
         private readonly IApiGateway _apiGateway;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ComparisonRepository(HRMSDbContext db, IApiGateway apiGateway)
+        public ComparisonRepository(HRMSDbContext db, IApiGateway apiGateway, IServiceScopeFactory serviceScopeFactory)
         {
             _db = db;
             _apiGateway = apiGateway;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task<ComparisonLog> RetryCompare(ComparisonData comparisonData)
@@ -100,6 +104,44 @@ namespace HRMS_WEB.Repositories
             await _db.SaveChangesAsync();
 
             return comparisonLog;
+        }
+
+        public async Task CompareExternalDataByPlan(ExternalData externalData)
+        {
+            // start comparison job
+            await Task.Run(async () =>
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                var db = scope.ServiceProvider.GetService<HRMSDbContext>();
+                var comparisonRepository = scope.ServiceProvider.GetRequiredService<IComparisonRepository>();
+                    
+                // get comparison types
+                var firstSourceType = externalData.Type;
+                var secondSources = await db.DocumentComparisonPlan
+                    .Where(p => p.FirstSource.Equals(firstSourceType))
+                    .Select(p => p.SecondSource)
+                    .ToListAsync();
+
+                foreach (var secondSource in secondSources)
+                {
+                    var secondExternalSource = await db.ExternalData
+                        .FirstOrDefaultAsync(e => e.ChassisNumber.Equals(externalData.ChassisNumber) && e.Type.Equals(secondSource));
+
+                    if (secondExternalSource == null)
+                    {
+                        continue;
+                    }
+                        
+                    var model = new ComparisonData()
+                    {
+                        FirstSourceBatchId = externalData.ID,
+                        SecondSourceBatchId = secondExternalSource.ID
+                    };
+                        
+                    var newComparisonLog = await comparisonRepository.RetryCompare(model);
+                }
+
+            });
         }
     }
 }
