@@ -41,11 +41,14 @@
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
-            @* <div class="row"> *@
-            @*     <div class="col-sm-12 text-right"> *@
-            @*         <a asp-action="Upload" asp-controller="Invoice" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a> *@
-            @*     </div> *@
-            @* </div> *@
+            <div class="row">
+                <div class="col-sm-6"><a asp-action="UploadExcel" asp-controller="ExternalData" class="btn btn-secondary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload Batches</a></div>
+                <div class="col-sm-6 text-right">
+                    <form asp-action="SyncDataWithPdfReader" asp-controller="GatewayApi">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-download"></i>&nbsp; &nbsp; Download Batches</button>
+                    </form>
+                </div>
+            </div>
         </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
@@ -74,6 +77,7 @@
                                     <td>@ed.Type</td>
                                     <td class="text-center">
                                         <a asp-controller="Validation" asp-action="Index" asp-route-firstSourceBatchId="@ed.ID" class="text-primary text-sm mr-3" target="_blank">Compare</a>
+                                        <a asp-controller="ExternalData" asp-action="DeleteExternalData" asp-route-id="@ed.ID" asp-route-firstSourceBatchId="@ed.ID" class="text-danger text-sm mr-3 fa fa-trash"></a>
                                     </td>
                                 </tr>
                             }

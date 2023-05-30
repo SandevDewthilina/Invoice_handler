@@ -17,13 +17,13 @@ namespace HRMS_WEB.ApiControllers
         {
             _apiGateway = apiGateway;
         }
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> SyncDataWithPdfReader()
         {
             try
             {
                 await _apiGateway.SyncDataWithPdfReader();
-                return Json(new {success = true});
+                return RedirectToAction("ExternalDataBatches", "ExternalData");
             }
             catch (Exception e)
             {

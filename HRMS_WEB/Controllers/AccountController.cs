@@ -38,7 +38,7 @@ namespace HRMS_WEB.Controllers
                 if (result.Succeeded)
                 {
                     await signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("ExternalDataBatches", "Home");
+                    return RedirectToAction("ExternalDataBatches", "ExternalData");
                 }
 
                 foreach (var error in result.Errors)
@@ -71,7 +71,7 @@ namespace HRMS_WEB.Controllers
                     {
                         return LocalRedirect(ReturnUrl);
                     }
-                    return RedirectToAction("ExternalDataBatches", "Home");
+                    return RedirectToAction("ExternalDataBatches", "ExternalData");
                 }
 
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");

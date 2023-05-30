@@ -3,6 +3,7 @@
 }
 
 @using KeyValuePair = HRMS_WEB.Controllers.KeyValuePair
+@using Newtonsoft.Json
 @model HRMS_WEB.Controllers.ComparisonData
 
 @section Styles{
@@ -70,7 +71,7 @@
                                             <option key="@source[1]" value="@source[1]" id="option_@source[1]">@source[0]</option>
                                         }
                                     </select>
-                                    </div>
+                                </div>
                             </div>
                             <div class="col-sm-4">
                                 <label></label>
@@ -79,41 +80,46 @@
                         </div>
                     </form>
                     <div class="my-3 row">
-                        <div class="col-sm-4 text-center"><h4>Scanned Fields</h4></div>
+                        <div class="col-sm-4 text-center">
+                            <h4>Scanned Fields</h4>
+                        </div>
                         <div class="col-sm-4"></div>
-                        <div class="col-sm-4 text-center"><h4>Source Data</h4></div>
+                        <div class="col-sm-4 text-center">
+                            <h4>Source Data</h4>
+                        </div>
                     </div>
-                    
-                    @foreach (List<KeyValuePair> pair in ViewBag.ComparisonPair)
-                    {
-                        <div class="row mt-1">
-                            <div class="col-sm-4">
-                                <div>@pair.ElementAt(0).Key</div>
-                                <input type="text" class="form-control" value="@pair.ElementAt(0).Value">
+
+                    <div v-for="pair in getPairsCollection" class="row mt-1 mb-2">
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div>{{pair[0].Key}}</div>
+                                <a v-on:click="updateValue(@Model.FirstSourceBatchId, pair[0].Key, 0)" class="text-primary ml-auto mr-3">update</a>
                             </div>
-                            <div class="col-sm-4" style="padding-top: 30px">
-                                <div class="row">
-                                    <div class="col-sm-5"><hr></div>
-                                    <div class="col-sm-2 text-center">
-                                        @if (pair.ElementAt(0).Value.Equals(pair.ElementAt(1).Value))
-                                        {
-                                            <i class="fa fa-check-circle text-success" style="font-size: 25px"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa fa-exclamation-circle text-danger" style="font-size: 25px"></i>
-                                        }
-                                    </div>
-                                    <div class="col-sm-5"><hr></div>
+                            <input type="text" class="form-control" v-model="pair[0].Value">
+                        </div>
+                        <div class="col-sm-4" style="padding-top: 30px">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <hr>
+                                </div>
+                                <div class="col-sm-2 text-center">
+                                    <i v-if="pair[0].Value === pair[1].Value" class="fa fa-check-circle text-success" style="font-size: 25px"></i>
+                                    <i v-else class="fa fa-exclamation-circle text-danger" style="font-size: 25px"></i>
+                                </div>
+                                <div class="col-sm-5">
+                                    <hr>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div>@pair.ElementAt(1).Key</div>
-                                <input type="text" class="form-control" value="@pair.ElementAt(1).Value">
-                            </div>
                         </div>
-                   
-                    }
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div>{{pair[1].Key}}</div>
+                                <a v-if="pair[1].Value === null" v-on:click="updateValue(@Model.SecondSourceBatchId, pair[1].Key, 1)" class="text-danger ml-auto mr-3">Create (Field Not Found)</a>
+                                <a v-else v-on:click="updateValue(@Model.SecondSourceBatchId, pair[1].Key, 1)" class="text-primary ml-auto mr-3">Update</a>
+                            </div>
+                            <input type="text" class="form-control" v-model="pair[1].Value">
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -132,5 +138,9 @@
     @* <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script> *@
     @* <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script> *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-    @* <script type="module" src="~/js/Validator.js"></script> *@
+    <script>
+        const pairsCollection = @Html.Raw(JsonConvert.SerializeObject(Model.KeyValuePairs))
+    </script>
+    <script type="module" src="~/js/Validator.js"></script>
+
 }

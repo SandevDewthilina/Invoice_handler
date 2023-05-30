@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using HRMS_WEB.Controllers;
 using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using KeyValuePair = HRMS_WEB.Controllers.KeyValuePair;
 
@@ -20,11 +22,13 @@ namespace HRMS_WEB.Repositories
     public class ApiGateway : IApiGateway
     {
         private readonly HRMSDbContext _db;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private string BASE_URL = "http://localhost:9100";
 
-        public ApiGateway(HRMSDbContext db)
+        public ApiGateway(HRMSDbContext db, IServiceScopeFactory serviceScopeFactory)
         {
             _db = db;
+            _serviceScopeFactory = serviceScopeFactory;
         }
         private async Task<ApiResponse<T>> HttpGet<T>(string url)
         {
@@ -67,14 +71,14 @@ namespace HRMS_WEB.Repositories
                     .Select(p => new KeyValuePair()
                     {
                         Key = p.Key, 
-                        Value = p.Value.ToUpper().Replace(" ", "")
+                        Value = p.Value.ToUpper().Replace(" ", "").Replace("\r", "").Replace("\n", "")
                     }).ToList();
                 
                 var chassisNumber = fieldKeyValuePairs!
                     .FirstOrDefault(p => p.Key.Equals("ChassisNumber"))
                     ?.Value;
                 
-                var externalData = await _db.ExternalData.FirstOrDefaultAsync(e => e.ChassisNumber.Equals(chassisNumber));
+                var externalData = await _db.ExternalData.FirstOrDefaultAsync(e => e.ChassisNumber.Equals(chassisNumber) && e.Type.Equals(uploadData.docType));
         
                 if (externalData != null)
                 {
@@ -82,7 +86,7 @@ namespace HRMS_WEB.Repositories
                     await _db.SaveChangesAsync();
                 }
                 
-                externalData = new ExternalData() { ChassisNumber = chassisNumber, Type = "PDF_READER"};
+                externalData = new ExternalData() { ChassisNumber = chassisNumber, Type = uploadData.docType};
                 await _db.ExternalData.AddAsync(externalData);
                 await _db.SaveChangesAsync();
 
@@ -96,6 +100,42 @@ namespace HRMS_WEB.Repositories
 
                 await _db.ExternalDataPair.AddRangeAsync(externalDataPairs);
                 await _db.SaveChangesAsync();
+                
+                // start comparison job
+                await Task.Run(async () =>
+                {
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var db = scope.ServiceProvider.GetService<HRMSDbContext>();
+                    var comparisonRepository = scope.ServiceProvider.GetRequiredService<IComparisonRepository>();
+                    
+                    // get comparison types
+                    var firstSourceType = uploadData.docType;
+                    var secondSources = await db.DocumentComparisonPlan
+                        .Where(p => p.FirstSource.Equals(firstSourceType))
+                        .Select(p => p.SecondSource)
+                        .ToListAsync();
+
+                    foreach (var secondSource in secondSources)
+                    {
+                        var secondExternalSource = await db.ExternalData
+                            .FirstOrDefaultAsync(e => e.ChassisNumber.Equals(chassisNumber) && e.Type.Equals(secondSource));
+
+                        if (secondExternalSource == null)
+                        {
+                            continue;
+                        }
+                        
+                        var model = new ComparisonData()
+                        {
+                            FirstSourceBatchId = externalData.ID,
+                            SecondSourceBatchId = secondExternalSource.ID
+                        };
+                        
+                        var newComparisonLog = await comparisonRepository.RetryCompare(model);
+                    }
+
+                });
+
             }
         }
     }

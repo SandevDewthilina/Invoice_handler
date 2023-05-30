@@ -15,5 +15,6 @@ namespace HRMS_WEB.DbContext
         public DbSet<ExternalData> ExternalData { get; set; }
         public DbSet<ExternalDataPair> ExternalDataPair { get; set; }
         public DbSet<ComparisonLog> ComparisonLog { get; set; }
+        public DbSet<DocumentComparisonPlan> DocumentComparisonPlan { get; set; }
     }
 }

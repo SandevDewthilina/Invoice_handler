@@ -32,7 +32,6 @@ namespace HRMS_WEB.Controllers
 
             var chassisNumber = firstSourceExternalData.ChassisNumber;
             ViewBag.chassisNumber = chassisNumber;
-            ViewBag.ComparisonPair = new int[] {};
             ViewBag.comparisonSources = await _db.ExternalData
                 .Where(e => e.ChassisNumber.Equals(chassisNumber) && e.ID != firstSourceBatchId)
                 .Select(e => new object[] {e.Type, e.ID})
@@ -51,15 +50,21 @@ namespace HRMS_WEB.Controllers
                 .Select(e => new object[] {e.Type, e.ID})
                 .ToListAsync();
             var newComparisonLog = await _comparisonRepository.RetryCompare(model);
-            ViewBag.ComparisonPair = JsonConvert.DeserializeObject<List<List<KeyValuePair>>>(newComparisonLog.Couplings);
+            model.KeyValuePairs = JsonConvert.DeserializeObject<List<List<KeyValuePair>>>(newComparisonLog.Couplings);
             return View(model);
         }
     }
 
+    
     public class ComparisonData
     {
+        public ComparisonData()
+        {
+            KeyValuePairs = new List<List<KeyValuePair>>();
+        }
         public int FirstSourceBatchId { get; set; }
         public int SecondSourceBatchId { get; set; }
+        public List<List<KeyValuePair>> KeyValuePairs { get; set; }
     }
 
     public class KeyValuePair

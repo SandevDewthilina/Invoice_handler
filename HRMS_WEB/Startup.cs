@@ -91,7 +91,7 @@ using AutoMapper;
             {
                 endpoints.MapControllerRoute(
                     name: "default", 
-                    pattern: "{controller=Home}/{action=ExternalDataBatches}/{id?}");
+                    pattern: "{controller=ExternalData}/{action=ExternalDataBatches}/{id?}");
             });
         }
     }

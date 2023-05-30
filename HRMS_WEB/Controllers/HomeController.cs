@@ -27,22 +27,7 @@ namespace HRMS_WEB.Controllers
         {
             return View();
         }
-
-        public async Task<IActionResult> ComparisonLogs()
-        {
-            return View(await _db.ComparisonLog
-                .Include(l => l.FirstExternalData)
-                .Include(l => l.SecondExternalData)
-                .ToListAsync());
-        }
-
-        public async Task<IActionResult> ExternalDataBatches()
-        {
-            return View(await _db.ExternalData
-                .Where(e => 
-                    _db.ExternalData.Any(ei => ei.ChassisNumber.Equals(e.ChassisNumber) && e.ID != ei.ID)).ToListAsync());
-        }
-
+        
         public IActionResult Privacy()
         {
             return View();
