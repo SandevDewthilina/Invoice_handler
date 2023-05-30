@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Data Batches";
+}
+
+@using HRMS_WEB.Entities
+@model List<HRMS_WEB.Entities.DocumentComparisonPlan>
+
+@section Styles{
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">@ViewData["Title"]</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">Comparison Execution Plan</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid" id="main">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title text-primary">Upload Excel</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" asp-action="UploadExecutionPlan">
+                        <div class="form-group">
+                            <label for="file">Select file:</label>
+                            <input type="file" name="file" id="file" class="form-control-file"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title text-primary">Execution Plans</h3>
+                </div>
+                <div class="card-body">
+                    <table id="myuploadstable" class="table table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Source</th>
+                            <th>Second Source</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (DocumentComparisonPlan plan in Model)
+                        {
+                            <tr>
+                                <td>@plan.ID</td>
+                                <td>@plan.FirstSource</td>
+                                <td>@plan.SecondSource</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<!-- PAGE SCRIPTS -->
+
+@section Scripts
+{
+    <!-- DataTables -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script>
+    $(document).ready(function () {
+                    $("#myuploadstable").DataTable({
+                        "responsive": true,
+                        "autoWidth": false,
+                    });
+                });
+    </script>
+}

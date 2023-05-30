@@ -82,7 +82,7 @@ namespace HRMS_WEB.Controllers
                             // data source type
                             var type = typeGroup.Key;
                             var filteredRecords = typeGroup.ToList();
-                            
+
                             _db.ExternalData
                                 .RemoveRange(_db.ExternalData
                                     .Where(e => e.ChassisNumber.Equals(chassisNumber) && e.Type.Equals(type))
@@ -94,7 +94,7 @@ namespace HRMS_WEB.Controllers
                             };
                             await _db.ExternalData.AddAsync(ed);
                             await _db.SaveChangesAsync();
-                            
+
                             foreach (var record in filteredRecords)
                             {
                                 await _db.ExternalDataPair.AddAsync(new ExternalDataPair()
@@ -104,23 +104,65 @@ namespace HRMS_WEB.Controllers
                                     ExternalDataID = ed.ID
                                 });
                             }
-                            
+
                             await _db.SaveChangesAsync();
                             await _comparisonRepository.CompareExternalDataByPlan(ed);
                         }
-                        
                     }
 
                     return RedirectToAction("ExternalDataBatches");
-
                 }
                 catch (HeaderValidationException e)
                 {
                     return Json(e.Message);
                 }
             }
+
             return Json("File Error");
         }
+
+        public async Task<IActionResult> ExecutionPlans()
+        {
+            return View(await _db.DocumentComparisonPlan.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadExecutionPlan(IFormFile file)
+        {
+            if (Path.GetExtension(file.FileName).Equals(".csv"))
+            {
+                using var reader = new StreamReader(file.OpenReadStream());
+                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                try
+                {
+                    var excelUploadRecords = csv.GetRecords<ExcelExecutionPlanRecord>().ToList();
+
+                    _db.RemoveRange(_db.DocumentComparisonPlan);
+                    await _db.SaveChangesAsync();
+
+                    await _db.DocumentComparisonPlan.AddRangeAsync(excelUploadRecords.Select(r => new DocumentComparisonPlan()
+                    {
+                        FirstSource = r.FirstSource,
+                        SecondSource = r.SecondSource
+                    }));
+                    await _db.SaveChangesAsync();
+
+                    return RedirectToAction("ExecutionPlans");
+                }
+                catch (HeaderValidationException e)
+                {
+                    return Json(e.Message);
+                }
+            }
+
+            return Json("File Error");
+        }
+    }
+
+    public class ExcelExecutionPlanRecord
+    {
+        public string FirstSource { get; set; }
+        public string SecondSource { get; set; }
     }
 
     public class ExcelUploadRecord

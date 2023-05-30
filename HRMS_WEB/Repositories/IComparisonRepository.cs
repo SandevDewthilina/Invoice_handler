@@ -111,7 +111,7 @@ namespace HRMS_WEB.Repositories
             {
                 using var scope = _serviceScopeFactory.CreateScope();
                 var db = scope.ServiceProvider.GetService<HRMSDbContext>();
-                var comparisonRepository = scope.ServiceProvider.GetRequiredService<IComparisonRepository>();
+                var comparisonRepository = scope.ServiceProvider.GetService<IComparisonRepository>();
                     
                 // get comparison types
                 var firstSourceType = externalData.Type;
