@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "My Uploads";
+﻿@model object
+
+@{
+    ViewBag.Title = "My Uploads";
+    Layout = "_SupplierLayout";
 }
 
 @section Styles{
@@ -37,7 +40,7 @@
             </div><!-- /.row -->
             <div class="row">
                 <div class="col-sm-12 text-right">
-                    <a asp-action="Upload" asp-controller="Invoice" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a>
+                    <a asp-action="Upload" asp-controller="Supplier" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp; &nbsp; Upload File</a>
                 </div>
             </div>
         </div><!-- /.container-fluid -->
@@ -84,9 +87,9 @@
                             </td>
                             <td class="text-center">
                                 <a :href="'/Invoice/ExtractDataFromPdf?Id=' + item.id" class="text-success text-sm fa fa-book-open mr-3"></a>
-                                <a :href="'/Invoice/EditUpload?Id=' + item.id" class="text-sm fa fa-edit mr-3"></a>
+                                @* <a :href="'/Invoice/EditUpload?Id=' + item.id" class="text-sm fa fa-edit mr-3"></a> *@
                                 <a class="text-danger text-sm fa fa-trash mr-3" :href="'/Invoice/DeleteUpload?Id=' + item.id"></a>
-                                <a class="text-s mr-3" :href="'/Invoice/ProcessUploadForIdWithoutSupplierDetection?Id=' + item.id">Process Tables</a>
+                                @* <a class="text-s mr-3" :href="'/Invoice/ProcessUploadForIdWithoutSupplierDetection?Id=' + item.id">Process Tables</a> *@
                             </td>
                         </tr>
                         </tbody>

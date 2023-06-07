@@ -12,6 +12,7 @@ using HRMS_WEB.Models;
 using HRMS_WEB.Repositories;
 using HRMS_WEB.Viewmodels;
 using HRMS_WEB.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -75,7 +76,6 @@ namespace HRMS_WEB.Controllers
                 await ProcessUploadForId(upload.ID);
             }
 
-
             return Ok();
         }
 
@@ -127,7 +127,7 @@ namespace HRMS_WEB.Controllers
             var upload = await _db.Upload.FirstOrDefaultAsync(u => u.ID == Id);
             var supplierRegexList = await _db.RegexComponent.Where(rc => rc.Key.Equals("Supplier")).ToListAsync();
 
-            
+
             var task = Task.Run(async () =>
             {
                 using var scope = _serviceScopeFactory.CreateScope();

@@ -32,7 +32,7 @@ namespace HRMS_WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = registerViewModel.Email, Email = registerViewModel.Email, PhoneNumber = registerViewModel.PhoneNumber, Name = registerViewModel.Name };
+                var user = new ApplicationUser { UserName = registerViewModel.Name, Email = registerViewModel.Email, PhoneNumber = registerViewModel.PhoneNumber, Name = registerViewModel.Name };
                 var result = await userManager.CreateAsync(user, registerViewModel.Password);
 
                 if (result.Succeeded)
@@ -62,7 +62,6 @@ namespace HRMS_WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)

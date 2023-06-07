@@ -1,6 +1,9 @@
 ﻿@{
     ViewBag.Title = "Process Invoice";
-    Layout = "_Layout";
+    if (User.IsInRole("Supplier"))
+    {
+        Layout = "_SupplierLayout";
+    }
 }
 
 @section Styles{

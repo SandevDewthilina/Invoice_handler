@@ -1,0 +1,141 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using iTextSharp.text.pdf.qrcode
+@model UploadData
+@{
+    ViewData["Title"] = "Accept or Reject Data";
+    Layout = "_SupplierLayout";
+}
+
+@section Styles
+{
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+        <!-- DataTables -->
+        <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+        <!-- Google Font: Source Sans Pro -->
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h5 class="m-0 text-dark">@ViewData["Title"]</h5>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">Accept or Reject</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid" id="main">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <div class="card-title">Review Data</div>
+                </div>
+                <div class="card-body">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title">Fields</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                            <!-- /.card-tools -->
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="col-sm-12">
+                                <div class="row mb-2" v-for="item in getFieldList">
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" :value="item.key" disabled>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" :value="item.value">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title">Tables</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool">
+                                    <div class="btn btn-sm" v-on:click="fetchTables"><i class="fas fa-sync-alt"></i> Fetch Tables</div>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                            <!-- /.card-tools -->
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div v-if="loading" class="col text-center">
+                                Loading, Please wait!
+                            </div>
+                            <div v-else class="px-1" style="max-width: 100%; overflow-x: scroll">
+                                <div class="row" v-for="table in getTableList">
+                                    <table class="table table-sm table-bordered table-striped mx-1">
+                                        <thead>
+                                        <tr>
+                                            <th v-for="head in table.headings">{{head}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="row in table.content">
+                                            <td v-for="item in row">{{item}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row text-right">
+                        <a asp-action="ConfirmData" asp-controller="Supplier" asp-route-uploadId="@Model.UploadID" asp-route-accept="@true" class="btn btn-success mr-3">Accept</a>
+                        <a asp-action="ConfirmData" asp-controller="Supplier" asp-route-uploadId="@Model.UploadID" asp-route-accept="@false" class="btn btn-danger">Reject</a>
+                    </div>
+                </div>
+            </div>
+        </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<!-- PAGE SCRIPTS -->
+
+
+@section Scripts
+{
+    <!-- DataTables -->
+        <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <script  type="module" src="~/js/acceptReject.js"></script>
+}

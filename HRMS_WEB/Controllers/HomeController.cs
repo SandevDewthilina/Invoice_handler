@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HRMS_WEB.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Supplier")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -24,6 +24,10 @@ namespace HRMS_WEB.Controllers
 
         public IActionResult Index()
         {
+            if (User.IsInRole("Supplier"))
+            {
+                return RedirectToActionPermanent("Index", "Supplier");
+            }
             return View();
         }
 

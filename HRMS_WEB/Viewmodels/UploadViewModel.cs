@@ -12,6 +12,10 @@ namespace HRMS_WEB.ViewModels
     {
         public ImageUploadViewModel()
         {
+            Templates = new List<Template>();
         }
+
+        public int TemplateId { get; set; }
+        public List<Template> Templates { get; set; }
     }
 }

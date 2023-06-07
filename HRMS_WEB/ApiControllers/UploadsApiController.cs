@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
+using HRMS_WEB.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,19 +16,37 @@ namespace HRMS_WEB.ApiControllers
     {
         // database instance
         private readonly HRMSDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UploadsApiController(HRMSDbContext db)
+        public UploadsApiController(HRMSDbContext db,UserManager<ApplicationUser> userManager)
         {
             _db = db;
+            _userManager = userManager;
         }
         
         // return file upload list
         [HttpGet]
         public async Task<IActionResult> GetFileUploads()
         {
-            
-            // get uploads
-            var uploads = await _db.Upload.Include(u =>u.Supplier).ToListAsync();
+            var uploads = new List<Upload>();
+            if (User.IsInRole("Supplier"))
+            {
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                var templateIds = await _db.SupplierTemplateAssignment
+                    .Where(a => a.Supplier.Name.Equals(user.Name))
+                    .Select(a => a.TemplateID)
+                    .ToListAsync();
+                uploads = await _db.UploadData.Where(d => templateIds.Any(id => id == (int)d.DetectedTemplateID))
+                    .Include(d => d.Upload)
+                    .Select(d => d.Upload)
+                    .ToListAsync();
+            }
+            else
+            {
+                uploads = await _db.Upload.Include(u =>u.Supplier)
+                    .ToListAsync();   
+            }
+
             foreach (Upload upload in uploads)
             {
                 if (upload.SupplierID != null)
@@ -52,6 +73,7 @@ namespace HRMS_WEB.ApiControllers
                 id = u.ID,
                 file_name = u.FileName,
                 supplier_name = u.Supplier?.Name,
+                supplierConfirmed = _db.UploadData.FirstOrDefault(ud => ud.UploadID == u.ID)?.SupplierConfirmed,
                 upload_date = u.UploadedDate.ToString("MM/dd/yyyy")
             });
             return Json(new

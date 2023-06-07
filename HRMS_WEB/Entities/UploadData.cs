@@ -9,6 +9,7 @@ namespace HRMS_WEB.Models
         public int? DetectedTemplateID { get; set; }
         public string FieldJson { get; set; }
         public string TableJson { get; set; }
+        public bool SupplierConfirmed { get; set; }
 
         public Upload Upload { get; set; }
         public Template DetectedTemplate { get; set; }
