@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper;
 using HRMS_WEB.DbContext;
 using HRMS_WEB.Entities;
 using HRMS_WEB.Models;
@@ -55,16 +57,40 @@ namespace HRMS_WEB.Controllers
             // Build the CSV content
             var csvContent = await BuildCsvContent(id);
 
-            // Set the content type and headers for the response
-            var contentType = "text/csv";
-            var fileName = "export.csv";
-            Response.Headers.Add("Content-Disposition", $"attachment; filename={fileName}");
+            // Create a new MemoryStream to hold the CSV data
+            var memoryStream = new MemoryStream();
 
-            // Return the CSV content as a FileResult
-            return File(System.Text.Encoding.UTF8.GetBytes(csvContent), contentType);
+            // Create a new StreamWriter using the memory stream and UTF-8 encoding
+            var streamWriter = new StreamWriter(memoryStream, Encoding.UTF8);
+
+            // Create a new CsvWriter using the StreamWriter
+            var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+
+            // Write the data to the CSV file
+
+            foreach (var row in csvContent)
+            {
+                foreach (var cell in row)
+                {
+                    csvWriter.WriteField(cell);
+                }
+
+                await csvWriter.NextRecordAsync();
+            }
+            
+            
+            // Flush the CsvWriter and StreamWriter
+            await csvWriter.FlushAsync();
+            await streamWriter.FlushAsync();
+
+            // Reset the position of the MemoryStream to the beginning
+            memoryStream.Position = 0;
+
+            // Return the CSV file as a FileStreamResult
+            return File(memoryStream, "text/csv", "data.csv");
         }
 
-        private async Task<string> BuildCsvContent(int templateId)
+        private async Task<List<string[]>> BuildCsvContent(int templateId)
         {
             var template = await _db.Template.FindAsync(templateId);
 
@@ -85,10 +111,10 @@ namespace HRMS_WEB.Controllers
                 .Where(ud => ud.DetectedTemplateID == templateId && !string.IsNullOrEmpty(ud.FieldJson))
                 .ToListAsync();
 
-            var sb = new StringBuilder();
+            List<string[]> records = new List<string[]>();
 
             // Append header row
-            sb.AppendLine(string.Join(",", keyMap.Keys));
+            records.Add(keyMap.Keys.ToArray());
 
             // Append data rows
             foreach (UploadData uploadData in uploadDatas)
@@ -97,13 +123,13 @@ namespace HRMS_WEB.Controllers
                 var tempMap = new Dictionary<string, string>(keyMap);
                 foreach (var key in keyMap.Keys)
                 {
-                    tempMap[key] = keyValuePairs?.FirstOrDefault(p => p.Key.Equals(key))?.Value;
+                    tempMap[key] = keyValuePairs?.FirstOrDefault(p => p.Key.Equals(key))?.Value.Replace("\n", "").Replace("\r", "");
                 }
 
-                sb.AppendLine(string.Join(",", tempMap.Values).Replace("\n", "").Replace("\r", "")); // Replace with your actual property names
+                records.Add(tempMap.Values.ToArray()); // Replace with your actual property names
             }
 
-            return sb.ToString();
+            return records;
         }
     }
 
